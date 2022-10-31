@@ -9,34 +9,7 @@ public class DriverPart1 {
         // Test receiving thread and send messages method
         // Create two nodes
         String localHost = "localhost";
-
-        if (nodeNum == 0)
-        {
-            node.requestConnection(localHost, listenPort + 1);
-            node.requestConnection(localHost, listenPort + 2);
-            node.requestConnection(localHost, listenPort + 3);
-            node.runNode();
-        }
-        else if (nodeNum == 1)
-        {
-            node.requestConnection(localHost, listenPort + 1);
-            node.requestConnection(localHost, listenPort + 2);
-            node.runNode();
-        }
-        else if (nodeNum == 2)
-        {
-            node.requestConnection(localHost, listenPort + 1);
-            node.runNode();
-        }
-        else if (nodeNum == 3)
-        {
-            node.runNode();
-        }
-
-        while(true)
-        {
-        }
-
-    }
     
+    }
+
 }

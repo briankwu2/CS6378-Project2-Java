@@ -3,6 +3,10 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
+/** ServerClass that is a thread that always is listening to incoming client connection requests.
+ *  
+ */
 public class ServerClass extends Thread 
 {
     private ServerSocket serverSocket;
@@ -46,6 +50,8 @@ public class ServerClass extends Thread
                     PrintWriter out = new PrintWriter(server.getOutputStream(),true);
                     outList.add(out);
                 }
+
+                // Try-with-resources block that opens up a listening thread that will receive and interpret incoming messages from this client node
                 try 
                 {
                     BufferedReader in = new BufferedReader(
@@ -61,7 +67,6 @@ public class ServerClass extends Thread
                 }
 
                 System.out.println("Socket connected to " + server.getRemoteSocketAddress());
-                // testFunction();
             }
             catch (IOException e)
             {
@@ -71,22 +76,6 @@ public class ServerClass extends Thread
         }
     }
 
-    // public void testFunction()
-    // {
-    //     synchronized(socketList)
-    //     {
-    //         System.out.println("We are inside ServerClass Thread");
-    //         System.out.print("Current Socket List is: ");
-    //         for (int i = 0; i < socketList.size();i++)
-    //         {
-    //             System.out.println(socketList.get(i).getRemoteSocketAddress());
-    //         }
-    //         System.out.println("There is " + outList.size() + " of outputs");
-    //         System.out.println("There is " + inList.size() + " of inputs");
-
-    //     }
-        
-    // }
 
     public static void main(String[] args) throws IOException {
         // Tests ServerClass Functionality
@@ -94,19 +83,8 @@ public class ServerClass extends Thread
         List<Socket> sockList = new ArrayList<Socket>();
         int port = Integer.parseInt(args[0]);
         List<PrintWriter> outList = new ArrayList<PrintWriter>();
-        PrintWriter outFile = new PrintWriter (new FileWriter("testingServerClass.txt"));
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-            System.out.println("Exiting All Threads... Cleaning up...");
-            outFile.close();
-            System.out.println("Done! Bye!");
-            }
-            });
-        AtomicBoolean activeFlag = new AtomicBoolean();
-        activeFlag.set(true);
-        AtomicBoolean blueFlag = new AtomicBoolean();
 
-        Thread t = new ServerClass(port, sockList, outList, outFile, activeFlag, blueFlag);
+        Thread t = new ServerClass(port, sockList, outList);
         t.start(); 
         
     }

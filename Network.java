@@ -85,10 +85,19 @@ public class Network {
      */
     public void cleanUpFunction()
     {
-        // Close all the sockets if not already
-        for (int i = 0; i < socketList.size(); i++)
+
+        try 
         {
-            socketList.get(1).close();
+
+            // Close all the sockets if not already
+            for (int i = 0; i < socketList.size(); i++)
+            {
+                socketList.get(1).close();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
     }
@@ -200,7 +209,7 @@ public class Network {
     {
         try
         {
-            outList.get(toNodeNum).println(message + ' ' + time_stamp + ' ' my_node_id);
+            // outList.get(toNodeNum).println(message + ' ' + time_stamp + ' ' my_node_id);
         }
         catch (Exception e)
         {
@@ -209,5 +218,4 @@ public class Network {
 
     }
 
-    runNode()
 }
