@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -12,7 +13,9 @@ public class ServerClass extends Thread
     private ServerSocket serverSocket;
     private List<Socket> socketList;
     private List<PrintWriter> outList;
+    private PriorityBlockingQueue<Request> priority_queue;
     private int port;
+    SharedParameters params;
 
 
     /**
@@ -25,12 +28,14 @@ public class ServerClass extends Thread
      * @param outList List of connected out streams that can be written to
      * @throws IOException
      */
-    public ServerClass(int port, List<Socket> socketList, List<PrintWriter> outList) throws IOException
+    public ServerClass(SharedParameters params)throws IOException
     {
+        this.params = params;
         serverSocket = new ServerSocket(port); // Creates a new server socket
-        this.socketList = socketList;
-        this.port = port;
-        this.outList = outList;
+        this.socketList = params.socketList;
+        this.port = params.listenPort;
+        this.outList = params.outList;
+        this.priority_queue = params.priority_queue;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class ServerClass extends Thread
                 {
                     BufferedReader in = new BufferedReader(
                         new InputStreamReader(server.getInputStream()));
-                    Thread listeningThread = new ListeningThread(in);
+                    Thread listeningThread = new ListeningThread(in,params);
                     listeningThread.start(); // Starts a new listening thread that will append to the output file
                     
                     System.out.println("New listening thread created. Listening to " + server.getRemoteSocketAddress());
@@ -83,9 +88,8 @@ public class ServerClass extends Thread
         List<Socket> sockList = new ArrayList<Socket>();
         int port = Integer.parseInt(args[0]);
         List<PrintWriter> outList = new ArrayList<PrintWriter>();
+        // Test server
 
-        Thread t = new ServerClass(port, sockList, outList);
-        t.start(); 
         
     }
 

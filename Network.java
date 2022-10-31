@@ -1,7 +1,7 @@
 import java.util.*; // For lists
 import java.net.*;
 import java.io.*;
-import java.util.*;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,19 +28,19 @@ public class Network {
      * minSendDelay int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
      * 
      */
-    private int messagesSent;
     private int my_node_id;
     private String hostName;
     private int listenPort;
     private int max_nodes;
-
-    private ArrayList<Integer> last_time_stamp; // Last time stamp array
+    SharedParameters params;
     // For CL Protocol
 
 
     // I/O Structures
     private List<Socket> socketList = Collections.synchronizedList(new ArrayList<Socket>()); // Creates a thread-safe Socket List
     private List<PrintWriter> outList = Collections.synchronizedList(new ArrayList<PrintWriter>()); // Creates a thread-safe output channel list
+    private List<Integer> last_time_stamp = Collections.synchronizedList(new ArrayList<Integer>()); // Creates a thread-safe time stamp array
+    private PriorityBlockingQueue<Request> priority_queue;
 
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
@@ -52,17 +52,19 @@ public class Network {
         this.my_node_id = my_node_id;
         this.hostName = hostName;
         this.listenPort = listenPort;
-        
+        priority_queue = new PriorityBlockingQueue<Request>();
+
         configNode(configFile);
-        AtomicBoolean activeFlag = new AtomicBoolean();
-        AtomicBoolean blueFlag = new AtomicBoolean();
         
         // Create the last_time_stamp array list and fill it with -1s.
-        last_time_stamp = new ArrayList<Integer>();
         for (int i = 0; i < max_nodes; i++)
         {
             last_time_stamp.add(-1);
         }
+
+        // Creates a shared parameters class to share with threads
+        params = new SharedParameters(my_node_id, listenPort, socketList, outList, last_time_stamp, priority_queue); 
+
 
         createServerClass(); // Creates a server thread that listens for connecting nodes and returns a socket to the connecting node
 
@@ -132,7 +134,7 @@ public class Network {
     {
         try
         {
-            Thread listeningServer = new ServerClass(this.listenPort,this.socketList, this.outList);
+            Thread listeningServer = new ServerClass(params);
             System.out.println("Server is now listening on port " + listenPort);
             listeningServer.start(); // Starts listening for new client connections
         }
@@ -168,7 +170,7 @@ public class Network {
                     {
                         BufferedReader in = new BufferedReader(
                             new InputStreamReader(connectSocket.getInputStream()));
-                        Thread listeningThread = new ListeningThread(in);
+                        Thread listeningThread = new ListeningThread(in, params);
                         listeningThread.start(); // Starts a new listening thread that will append to the output file
                     }
                     catch (Exception e)
@@ -195,7 +197,7 @@ public class Network {
         // Synchronized Writes to a file
         try
         {
-            Thread t = new ListeningThread((inSocket));
+            Thread t = new ListeningThread(inSocket, params);
             t.start(); // Starts the new listening thread that writes to the output file
         }
         catch (Exception e)
