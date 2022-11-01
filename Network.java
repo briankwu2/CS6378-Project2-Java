@@ -6,56 +6,40 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Network {
-    // Implement Connection to every node in config file (for now test just three manually)
-    // Each node will have a client connection to a node, and a server thread that runs
-    // Process Node will first
-    /*
+     /* 
      * 1. Connect to all respective nodes (client threads will connect to neighbors)
      *      0 -> 1,2,3,4
      *      1 -> 2,3,4
      *      2 -> 3, 4
      *      3 -> 4
-     * 2. If it's active it sends somewhere from minMessages to maxMessages then turns passive (random pick), then turns passive
-     * 3. If it's passive and has sent <= maxMessages, then turn active when it receives a message
-     * 
-     * Implementation Steps
-     * Make the nodes be able to connect to eachother and send basic messages 
-     * Make it so that they send 
-     * 
-     * Variables:
-     * Each node will have some minPerActive and maxPerActive constants
-     * Each node will have a passive/active flag (True, False)
-     * minSendDelay int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
      * 
      */
+
     private int my_node_id;
     private String hostName;
     private int listenPort;
     private int max_nodes;
     SharedParameters params;
-    // For CL Protocol
-
 
     // I/O Structures
     private List<Socket> socketList = Collections.synchronizedList(new ArrayList<Socket>()); // Creates a thread-safe Socket List
     private List<PrintWriter> outList = Collections.synchronizedList(new ArrayList<PrintWriter>()); // Creates a thread-safe output channel list
     private List<Integer> last_time_stamp = Collections.synchronizedList(new ArrayList<Integer>()); // Creates a thread-safe time stamp array
+    private List<NodeInfo> node_info = Collections.synchronizedList(new ArrayList<NodeInfo>()); // ArrayList containing all the info
     private PriorityBlockingQueue<Request> priority_queue;
 
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
      */
-    
-    public Network(int my_node_id, String hostName, int listenPort, String configFile)
+    public Network(int my_node_id, List<NodeInfo> node_info) 
     {
         
         this.my_node_id = my_node_id;
-        this.hostName = hostName;
-        this.listenPort = listenPort;
+        this.node_info = node_info;
+        this.hostName = node_info.get(my_node_id).hostName;
+        this.listenPort = node_info.get(my_node_id).listenPort;
         priority_queue = new PriorityBlockingQueue<Request>();
 
-        configNode(configFile);
-        
         // Create the last_time_stamp array list and fill it with -1s.
         for (int i = 0; i < max_nodes; i++)
         {
@@ -146,6 +130,11 @@ public class Network {
     }
 
     // Requests to connect with another node's server thread and establish a connection
+    /* TO-DO:
+     * - Make a method to find Client_ID (their node id) via the config file
+     * - Pass it in to the listening thread
+     * 
+     */
     public Socket requestConnection(String remoteHost, int remotePort)
     {
         System.out.println("Attempting to connect to " + remoteHost + " on port number " + remotePort + "...");
@@ -217,6 +206,13 @@ public class Network {
         {
             e.printStackTrace();
         }
+
+    }
+
+    public int findNodeID(String hostName)
+    {
+        
+
 
     }
 

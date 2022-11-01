@@ -15,9 +15,10 @@ public class ListeningThread extends Thread
      * 
      * @param inSocket
      */
-    public ListeningThread (BufferedReader inSocket, SharedParameters params)
+    public ListeningThread (BufferedReader inSocket, int client_id, SharedParameters params)
     {
         this.inSocket = inSocket;
+        this.client_id = client_id;
         this.params = params;
         this.priority_queue = params.priority_queue;
         this.my_node_id = params.my_node_id;
@@ -119,7 +120,7 @@ public class ListeningThread extends Thread
     }
 
     public static void main(String[] args) {
-        ListeningThread l1 = new ListeningThread(null, null);
+        ListeningThread l1 = new ListeningThread(null, null,null);
         ArrayList<Integer> ar1 = new ArrayList<>();
 
         System.out.println(l1.handle_message("request 5 10", ar1));
