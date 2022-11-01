@@ -4,7 +4,7 @@ import java.net.InetAddress;
 public class Parser {
 
     private List<NodeInfo> node_info = Collections.synchronizedList(new ArrayList<NodeInfo>());
-    public int my_node_id;
+    
     public void parseFile(String configFile)
     {
         try
@@ -89,7 +89,8 @@ public class Parser {
                     if (stageOfConfig == 0 && tokens.size() == 4)
                     {
                         int tokenLen = tokens.size();
-                        ArrayList<Integer> globalParams = new ArrayList<>(4);
+                        int globalParams[] = {0,0,0,0};
+                        boolean params_okay = true; 
 
                         while (tokenLen != 0)
                         {
@@ -97,7 +98,7 @@ public class Parser {
                             // Are the characters in the tokens digits?
                             for (int j = 0; j < tokens.get(tokenLen).length(); j++)
                             {
-                                if (Character.isDigit(tokens.get(tokenLen).charAt(j)))
+                                if (!Character.isDigit(tokens.get(tokenLen).charAt(j)))
                                 {
                                     valid = false;
                                     break;
@@ -106,23 +107,26 @@ public class Parser {
 
                             if (valid)
                             {
-                                globalParams.add(tokenLen,Integer.parseInt(tokens.get(tokenLen)));
+                                globalParams[tokenLen] = Integer.parseInt(tokens.get(tokenLen));
                             }
                             else
                             {
-                                globalParams.clear();
+                                params_okay = false;
                                 break;
                             }
                         }
                         if(valid) stageOfConfig = 1;
 
                         // Set global parameters
-                        NodeInfo.setGlobalParameters(
-                            globalParams.get(0),
-                            globalParams.get(1),
-                            globalParams.get(2),
-                            globalParams.get(3)
-                        );
+                        if (params_okay)
+                        {
+                            NodeInfo.setGlobalParameters(
+                                globalParams[0],
+                                globalParams[1],
+                                globalParams[2],
+                                globalParams[3]
+                            );
+                        }
                     } //end of global parameters
 
                     else if (stageOfConfig == 1 && tokens.size() == 3)
@@ -199,21 +203,27 @@ public class Parser {
                 throw new Exception();
             }
 
-
-            // Test
-            System.out.println(NodeInfo.num_nodes);
-            System.out.println(NodeInfo.interRequestDelay);
-            System.out.println(NodeInfo.csExeTime);
-            System.out.println(NodeInfo.maxRequests);
-
+            // Assign information into list of NodeInfo
             for (int i = 0; i < node_ips.size();i++)
             {
-                System.out.println(node_ips.get(i));
+                NodeInfo info = new NodeInfo(i,node_ips.get(i),node_ports.get(i));
+                node_info.add(info); //
             }
-            for (int i = 0; i < node_ports.size(); i++)
-            {
-                System.out.println(node_ports.get(i));
-            }
+
+            // Test
+            // System.out.println(NodeInfo.num_nodes);
+            // System.out.println(NodeInfo.interRequestDelay);
+            // System.out.println(NodeInfo.csExeTime);
+            // System.out.println(NodeInfo.maxRequests);
+
+            // for (int i = 0; i < node_ips.size();i++)
+            // {
+            //     System.out.println(node_ips.get(i));
+            // }
+            // for (int i = 0; i < node_ports.size(); i++)
+            // {
+            //     System.out.println(node_ports.get(i));
+            // }
 
         }
         catch (Exception e)

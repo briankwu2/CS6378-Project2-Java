@@ -1,5 +1,5 @@
 # this is a comment
-5 6 10 100 
+4 6 10 100
 
 0 dc01 1324 ### afioea
 1 dc02 4210 #afeio

@@ -31,5 +31,6 @@ public class SharedParameters {
     public List<PrintWriter> outList;
     public List<Integer> last_time_stamp;
     public PriorityBlockingQueue<Request> priority_queue;
+    public 
     
 }

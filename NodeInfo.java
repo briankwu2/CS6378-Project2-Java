@@ -28,4 +28,14 @@ public class NodeInfo {
 
     }
 
+    /**
+     * @param hostName String of host name to compare against
+     * @return Returns true if the given host name is the same as the node's host name
+     */
+    public boolean hostNameMatch(String hostName)
+    {
+        return this.hostName.compareTo(hostName) == 0;
+
+    }
+
 }

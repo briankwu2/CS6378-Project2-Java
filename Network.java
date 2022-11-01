@@ -18,6 +18,7 @@ public class Network {
     private int my_node_id;
     private String hostName;
     private int listenPort;
+
     private int max_nodes;
     SharedParameters params;
 
@@ -25,16 +26,30 @@ public class Network {
     private List<Socket> socketList = Collections.synchronizedList(new ArrayList<Socket>()); // Creates a thread-safe Socket List
     private List<PrintWriter> outList = Collections.synchronizedList(new ArrayList<PrintWriter>()); // Creates a thread-safe output channel list
     private List<Integer> last_time_stamp = Collections.synchronizedList(new ArrayList<Integer>()); // Creates a thread-safe time stamp array
-    private List<NodeInfo> node_info = Collections.synchronizedList(new ArrayList<NodeInfo>()); // ArrayList containing all the info
+    private List<NodeInfo> node_info; // 
     private PriorityBlockingQueue<Request> priority_queue;
 
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
      */
-    public Network(int my_node_id, List<NodeInfo> node_info) 
+    public Network(List<NodeInfo> node_info) 
     {
-        
-        this.my_node_id = my_node_id;
+      
+        // Find which node this machine is 
+        try
+        {
+            hostName = InetAddress.getLocalHost().getHostName();
+            my_node_id = findNodeID(hostName);
+            if(my_node_id == -1) // Running on the wrong machine
+            {
+                throw new Exception();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         this.node_info = node_info;
         this.hostName = node_info.get(my_node_id).hostName;
         this.listenPort = node_info.get(my_node_id).listenPort;
@@ -48,7 +63,6 @@ public class Network {
 
         // Creates a shared parameters class to share with threads
         params = new SharedParameters(my_node_id, listenPort, socketList, outList, last_time_stamp, priority_queue); 
-
 
         createServerClass(); // Creates a server thread that listens for connecting nodes and returns a socket to the connecting node
 
@@ -66,8 +80,8 @@ public class Network {
         // FIXME: Put Socket Establishment Code HERE
     }
 
-    /** Closes all sockets and resources used.
-     * 
+    /** 
+     * Closes all sockets and resources used.
      */
     public void cleanUpFunction()
     {
@@ -195,7 +209,11 @@ public class Network {
         }
     }
 
-    // Send a random amount of messages between minPerActive and maxPerActive to a random node within the connection list.
+    /**
+     * Sends a message to node num.
+     * @param message
+     * @param toNodeNum
+     */
     public void sendMessages(String message, int toNodeNum)
     {
         try
@@ -209,10 +227,24 @@ public class Network {
 
     }
 
+    /**
+     * Finds the node id of a given host name.
+     * 
+     * @param hostName The host name to be compared. In format of "dcXX.utdallas.edu"
+     * @return Returns the node_id of the host name if found.
+     *         Otherwise, return -1 if not found.
+     */
     public int findNodeID(String hostName)
     {
-        
+        for (int i = 0; i < node_info.size(); i++)
+        {
+            if(node_info.get(i).hostNameMatch(hostName))
+            {
+                return node_info.get(i).node_id;
+            }
+        }
 
+        return -1; // If hostname not found within node info
 
     }
 
