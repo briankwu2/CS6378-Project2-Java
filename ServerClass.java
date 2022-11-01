@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ServerClass extends Thread 
 {
     private ServerSocket serverSocket;
-    private List<Socket> socketList;
-    private List<PrintWriter> outList;
+    private Map<Integer,Socket> socketMap;
+    private Map<Integer, PrintWriter> writeMap;
     private PriorityBlockingQueue<Request> priority_queue;
     private int port;
     SharedParameters params;
@@ -20,21 +20,21 @@ public class ServerClass extends Thread
 
     /**
      * Constructor that initializes the server socket and opens up to listen for incoming connections
-     * Also initializes shared thread-safe lists such as SocketList and outList 
+     * Also initializes shared thread-safe lists such as SocketList and writeMap 
      * Passes on these sockets to the main Network class
      * 
      * @param port Port that the Server is listening on
-     * @param socketList List of connected sockets
-     * @param outList List of connected out streams that can be written to
+     * @param socketMap List of connected sockets
+     * @param writeMap List of connected out streams that can be written to
      * @throws IOException
      */
-    public ServerClass(SharedParameters params)throws IOException
+    public ServerClass(SharedParameters params) throws IOException
     {
-        this.params = params;
         serverSocket = new ServerSocket(port); // Creates a new server socket
-        this.socketList = params.socketList;
+        this.params = params;
+        this.socketMap = params.socketMap;
         this.port = params.listenPort;
-        this.outList = params.outList;
+        this.writeMap = params.writeMap;
         this.priority_queue = params.priority_queue;
     }
 
@@ -46,24 +46,31 @@ public class ServerClass extends Thread
             try
             {
                 Socket server = serverSocket.accept();
-
-                synchronized(this.socketList){
-                    socketList.add(server);
+                String clientName = server.getInetAddress().getHostName(); 
+                int client_id = params.findNodeID(clientName);
+                if (client_id == -1)
+                {
+                    System.out.println("Incoming client " + clientName + " not found in node info. Ignoring connection.");
+                    continue;
                 }
-                synchronized(this.outList)
+
+                synchronized(socketMap){
+                    socketMap.put(client_id, server);
+                }
+                synchronized(this.writeMap)
                 {
                     PrintWriter out = new PrintWriter(server.getOutputStream(),true);
-                    outList.add(out);
+                    writeMap.put(client_id, out);
                 }
 
                 // Try-with-resources block that opens up a listening thread that will receive and interpret incoming messages from this client node
                 try 
                 {
+
                     BufferedReader in = new BufferedReader(
                         new InputStreamReader(server.getInputStream()));
-                    Thread listeningThread = new ListeningThread(in,params);
+                    Thread listeningThread = new ListeningThread(in, client_id,params);
                     listeningThread.start(); // Starts a new listening thread that will append to the output file
-                    
                     System.out.println("New listening thread created. Listening to " + server.getRemoteSocketAddress());
                 }
                 catch (Exception e)
@@ -83,13 +90,6 @@ public class ServerClass extends Thread
 
 
     public static void main(String[] args) throws IOException {
-        // Tests ServerClass Functionality
-        System.out.println("Server Class has now started...");
-        List<Socket> sockList = new ArrayList<Socket>();
-        int port = Integer.parseInt(args[0]);
-        List<PrintWriter> outList = new ArrayList<PrintWriter>();
-        // Test server
-
         
     }
 

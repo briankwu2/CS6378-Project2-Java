@@ -1,11 +1,12 @@
 import java.util.*; // For lists
 import java.net.*;
 import java.io.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Network {
+public class Network extends Thread {
      /* 
      * 1. Connect to all respective nodes (client threads will connect to neighbors)
      *      0 -> 1,2,3,4
@@ -14,17 +15,25 @@ public class Network {
      *      3 -> 4
      * 
      */
-
+    // Node Information
     private int my_node_id;
     private String hostName;
     private int listenPort;
-
     private int max_nodes;
+    private Request my_request;
+
+    // Shared Parameters Class to pass in to threads
     SharedParameters params;
 
+    // Atomic Boolean Flags 
+    Map<String, AtomicBoolean> flagMap; // Should be a ConcurrentHashMap class made in Application Class
+    AtomicBoolean application_request;
+    AtomicBoolean cs_ready;
+    AtomicBoolean release_flag;
+
     // I/O Structures
-    private List<Socket> socketList = Collections.synchronizedList(new ArrayList<Socket>()); // Creates a thread-safe Socket List
-    private List<PrintWriter> outList = Collections.synchronizedList(new ArrayList<PrintWriter>()); // Creates a thread-safe output channel list
+    private Map<Integer, Socket> socketMap = new ConcurrentHashMap<>();// Creates a thread-safe Socket List
+    private Map<Integer, PrintWriter> writeMap = new ConcurrentHashMap<>(); // Creates a thread-safe output channel list
     private List<Integer> last_time_stamp = Collections.synchronizedList(new ArrayList<Integer>()); // Creates a thread-safe time stamp array
     private List<NodeInfo> node_info; // 
     private PriorityBlockingQueue<Request> priority_queue;
@@ -32,14 +41,14 @@ public class Network {
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
      */
-    public Network(List<NodeInfo> node_info) 
+    public Network(List<NodeInfo> node_info, Map<String, AtomicBoolean> flagMap) 
     {
       
         // Find which node this machine is 
         try
         {
             hostName = InetAddress.getLocalHost().getHostName();
-            my_node_id = findNodeID(hostName);
+            my_node_id = params.findNodeID(hostName);
             if(my_node_id == -1) // Running on the wrong machine
             {
                 throw new Exception();
@@ -50,6 +59,14 @@ public class Network {
             e.printStackTrace();
         }
 
+        // Gets the AtomicBooleans from passed in map.
+        this.flagMap = flagMap;
+        application_request = flagMap.get("request");
+        cs_ready = flagMap.get("ready");
+        release_flag = flagMap.get("release");
+
+
+        // Instantiate node information
         this.node_info = node_info;
         this.hostName = node_info.get(my_node_id).hostName;
         this.listenPort = node_info.get(my_node_id).listenPort;
@@ -62,7 +79,7 @@ public class Network {
         }
 
         // Creates a shared parameters class to share with threads
-        params = new SharedParameters(my_node_id, listenPort, socketList, outList, last_time_stamp, priority_queue); 
+        params = new SharedParameters(my_node_id, listenPort, socketMap, writeMap, last_time_stamp, priority_queue,node_info); 
 
         createServerClass(); // Creates a server thread that listens for connecting nodes and returns a socket to the connecting node
 
@@ -80,54 +97,89 @@ public class Network {
         // FIXME: Put Socket Establishment Code HERE
     }
 
-    /** 
-     * Closes all sockets and resources used.
+    /**
+     * Thread run() function that executes the CL protocol.
      */
-    public void cleanUpFunction()
+    @Override    
+    public void run()
     {
-
-        try 
+        while(true)
         {
-
-            // Close all the sockets if not already
-            for (int i = 0; i < socketList.size(); i++)
+            // If CS_enter() is called, push request onto priority queue and send request message to all other nodes
+            if (application_request.get())
             {
-                socketList.get(1).close();
+                increment_time_stamp();
+                my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
+
+                priority_queue.add(my_request);
+                for (int i = 0; i < writeMap.size(); i++)
+                {
+                    if (i == my_node_id) continue; // Skip my own node
+
+                    
+                    increment_time_stamp();
+                    String send_msg = "request " + last_time_stamp.get(my_node_id) + " " + my_node_id;
+                    writeMap.get(i).println(send_msg); // Sends request message to node i
+
+                }
+                application_request.set(false);
+                
+            }
+
+            // Check two conditions to enter critical section
+
+            // First Condtition
+            // Check if my_request is in the priority queue and not in critical section
+            if (
+                !cs_ready.get() &&
+                !priority_queue.isEmpty() && 
+                my_request.compareTo(priority_queue.peek()) == 0)
+            {
+                // Second Condition
+                // FIXME: Double check this condition/protocol
+                // Check if my request's time stamp is lower than all of the other node's latest time stamp messages
+                for (int i = 0; i < last_time_stamp.size(); i++)
+                {
+                    if (i == my_node_id) continue;
+
+                    else if (my_request.getTime_stamp() < last_time_stamp.get(i)) cs_ready.set(true);
+                    else if (my_request.getTime_stamp() == last_time_stamp.get(i))
+                    {
+                        if(my_request.getNode_id() < i)
+                        {
+                            cs_ready.set(true);
+                        }
+
+                    }
+
+                }
+
+            }
+
+            // Once critical section is finished, release request and broadcast release message
+            if (release_flag.get())
+            {
+                // To send a release message to all other nodes
+                for (int i = 0; i < writeMap.size(); i++)
+                {
+                    // Ignore sending anything to my own node
+                    if(i == my_node_id) continue;
+
+                    // Send request messages to all other nodes
+                    increment_time_stamp();
+                    String send_msg = "release " + last_time_stamp.get(my_node_id) + " " + my_node_id;
+                    writeMap.get(i).println(send_msg);
+                }
+                priority_queue.poll(); // Pop off my request
+                release_flag.set(false); 
             }
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        
+
 
     }
 
-    /** Configures the node to the global parameters read from the configFile
-     * FIXME: Move over to the Application Module
-     * @param configFile Text file that contains all the nodes and global parameters
-     */
-    public void configNode(String configFile)
-    {
-        try(
-            BufferedReader inFile = new BufferedReader(new FileReader(configFile));
-        )
-        {
-            String config = inFile.readLine();
-            while (config.charAt(0) == '#')
-            {
-                config = inFile.readLine();
-            }
-            
-            String configParameters[] = config.split(" ");
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    // Creates a server thread that listens and establishes connections
+    // Creates a server thread that listens and establishes connections 
     public void createServerClass()
     {
         try
@@ -152,7 +204,15 @@ public class Network {
     public Socket requestConnection(String remoteHost, int remotePort)
     {
         System.out.println("Attempting to connect to " + remoteHost + " on port number " + remotePort + "...");
-        
+
+        // Finds out which node id are we trying to connec to
+        int client_id = params.findNodeID(remoteHost);
+        if (client_id == -1)
+        {
+            System.out.println("ERROR: Client id not found in requestConnection");
+        }
+
+        // Loop to attempt to connect to node 
         while(true)
         {
             try
@@ -160,20 +220,20 @@ public class Network {
                 Socket connectSocket = new Socket(remoteHost, remotePort); // Attempts to create a connection with host/port
                 if (connectSocket != null)
                 {
-                    synchronized(socketList)
+                    synchronized(socketMap)
                     {
-                        socketList.add(connectSocket); // Adds the socket to the socketlist
+                        socketMap.put(client_id, connectSocket); // Adds the socket to the socketlist
                     }
-                    synchronized(outList)
+                    synchronized(writeMap)
                     {
                         PrintWriter out = new PrintWriter(connectSocket.getOutputStream(),true);
-                        outList.add(out);
+                        writeMap.put(client_id, out);
                     }
                     try
                     {
                         BufferedReader in = new BufferedReader(
                             new InputStreamReader(connectSocket.getInputStream()));
-                        Thread listeningThread = new ListeningThread(in, params);
+                        Thread listeningThread = new ListeningThread(in,client_id, params);
                         listeningThread.start(); // Starts a new listening thread that will append to the output file
                     }
                     catch (Exception e)
@@ -193,59 +253,30 @@ public class Network {
         }
     }
 
-    // Thread that will always listen to the socket connections from other nodes
-    public void createReceivingThread(BufferedReader inSocket)
+
+
+    public void increment_time_stamp()
     {
-        // Create a thread that listens to the specified socket
-        // Synchronized Writes to a file
-        try
-        {
-            Thread t = new ListeningThread(inSocket, params);
-            t.start(); // Starts the new listening thread that writes to the output file
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        last_time_stamp.set(my_node_id, last_time_stamp.get(my_node_id) + 1); // Increments my time stamp
     }
-
-    /**
-     * Sends a message to node num.
-     * @param message
-     * @param toNodeNum
+    /** 
+     * Closes all sockets and resources used.
      */
-    public void sendMessages(String message, int toNodeNum)
+    public void cleanUpFunction()
     {
-        try
+        try 
         {
-            // outList.get(toNodeNum).println(message + ' ' + time_stamp + ' ' my_node_id);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * Finds the node id of a given host name.
-     * 
-     * @param hostName The host name to be compared. In format of "dcXX.utdallas.edu"
-     * @return Returns the node_id of the host name if found.
-     *         Otherwise, return -1 if not found.
-     */
-    public int findNodeID(String hostName)
-    {
-        for (int i = 0; i < node_info.size(); i++)
-        {
-            if(node_info.get(i).hostNameMatch(hostName))
+            // Close all the sockets if not already
+            for (int i = 0; i < socketMap.size(); i++)
             {
-                return node_info.get(i).node_id;
+                socketMap.get(1).close();
             }
         }
-
-        return -1; // If hostname not found within node info
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
     }
-
+    
 }

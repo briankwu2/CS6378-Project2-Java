@@ -1,5 +1,5 @@
 import java.util.concurrent.PriorityBlockingQueue;
-
+import java.util.concurrent.*;
 // Class to hold data structures that can be passed to other methods
 import java.util.*; // For lists
 import java.net.*;
@@ -11,26 +11,49 @@ public class SharedParameters {
     public SharedParameters(
         int my_node_id,
         int listenPort,
-        List<Socket> socketList,
-        List<PrintWriter> outList,
+        Map<Integer, Socket> socketMap,
+        Map<Integer, PrintWriter> writeMap,
         List<Integer> last_time_stamp,
-        PriorityBlockingQueue<Request> priority_queue)
+        PriorityBlockingQueue<Request> priority_queue,
+        List<NodeInfo> node_info)
     {
         this.my_node_id = my_node_id;
         this.listenPort = listenPort;
-        this.socketList = socketList;
-        this.outList = outList;
+        this.socketMap = socketMap;
+        this.writeMap = writeMap;
         this.last_time_stamp = last_time_stamp;
         this.priority_queue = priority_queue;
+        this.node_info = node_info;
     }
 
     // Variables
     public int my_node_id;
     public int listenPort;
-    public List<Socket> socketList;
-    public List<PrintWriter> outList;
+    public Map<Integer, Socket> socketMap;
+    public Map<Integer, PrintWriter> writeMap;
     public List<Integer> last_time_stamp;
     public PriorityBlockingQueue<Request> priority_queue;
-    public 
-    
+    public List<NodeInfo> node_info;
+
+    /**
+     * Finds the node id of a given host name.
+     * 
+     * @param hostName The host name to be compared. In format of "dcXX.utdallas.edu"
+     * @return Returns the node_id of the host name if found.
+     *         Otherwise, return -1 if not found.
+     */
+    public int findNodeID(String hostName)
+    {
+        for (int i = 0; i < node_info.size(); i++)
+        {
+            if(node_info.get(i).hostNameMatch(hostName))
+            {
+                return node_info.get(i).node_id;
+            }
+        }
+
+        return -1; // If hostname not found within node info
+
+    }
+
 }
