@@ -111,8 +111,8 @@ public class Network extends Thread {
          for (int i = my_node_id + 1; i < node_info.size();i++)
          {
             String hostConnect = node_info.get(i).hostName;
-            int hostID = node_info.get(i).node_id;
-            requestConnection(hostConnect, hostID); // Attempts to connect to the host
+            int hostPort= node_info.get(i).listenPort;
+            requestConnection(hostConnect, listenPort); // Attempts to connect to the host
          }
 
     }
