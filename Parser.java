@@ -243,7 +243,7 @@ public class Parser {
 
     public static void main(String[] args) {
         Parser parse = new Parser();
-
+        
         parse.parseFile("config.txt");
     }
     
