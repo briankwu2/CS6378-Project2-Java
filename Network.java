@@ -112,7 +112,7 @@ public class Network extends Thread {
          {
             String hostConnect = node_info.get(i).hostName;
             int hostPort= node_info.get(i).listenPort;
-            requestConnection(hostConnect, listenPort); // Attempts to connect to the host
+            requestConnection(hostConnect, hostPort); // Attempts to connect to the host
          }
 
     }
