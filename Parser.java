@@ -18,7 +18,6 @@ public class Parser {
             boolean valid = true;
             boolean nodeIDCheckFlag = true;
             String hostName = InetAddress.getLocalHost().getHostName();
-            int node = 0; 
             int stageOfConfig = 0;
 
             ArrayList<String> node_ips = new ArrayList<>();
@@ -174,11 +173,12 @@ public class Parser {
                         {
                             node_ips.add(ipPort.get(1) + ".utdallas.edu");
                             node_ports.add(Integer.parseInt(ipPort.get(2)));
-                            if (nodeIDCheckFlag && ipPort.get(1).charAt(2) == hostName.charAt(2) && ipPort.get(1).charAt(3) == hostName.charAt(3))
-                            {
-                                node = node_ips.size() - 1;
-                                nodeIDCheckFlag = false;
-                            }
+                            // Not needed because we have findNodeID in SharedParameters
+                            // if (nodeIDCheckFlag && ipPort.get(1).charAt(2) == hostName.charAt(2) && ipPort.get(1).charAt(3) == hostName.charAt(3))
+                            // {
+                            //     node = node_ips.size() - 1;
+                            //     nodeIDCheckFlag = false;
+                            // }
                             ipPort.clear();
                         }
                     } // End of Checking IP Addresses

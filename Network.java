@@ -3,7 +3,6 @@ import java.net.*;
 import java.io.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Network extends Thread {
@@ -94,7 +93,28 @@ public class Network extends Thread {
         });
 
 
-        // FIXME: Put Socket Establishment Code HERE
+
+        // Socket Establishment
+
+        /* 
+        Create a strongly created graph that connects to all the other nodes.
+        Node i will connect to all nodes above it
+        It will listen to all nodes below it.
+        E.g.
+        Consider 4 nodes
+        0 -> 1,2,3
+        1 -> 2, 3
+        2 -> 3
+        3 ->
+         */
+
+         for (int i = my_node_id + 1; i < node_info.size();i++)
+         {
+            String hostConnect = node_info.get(i).hostName;
+            int hostID = node_info.get(i).node_id;
+            requestConnection(hostConnect, hostID); // Attempts to connect to the host
+         }
+
     }
 
     /**
@@ -196,11 +216,6 @@ public class Network extends Thread {
     }
 
     // Requests to connect with another node's server thread and establish a connection
-    /* TO-DO:
-     * - Make a method to find Client_ID (their node id) via the config file
-     * - Pass it in to the listening thread
-     * 
-     */
     public Socket requestConnection(String remoteHost, int remotePort)
     {
         System.out.println("Attempting to connect to " + remoteHost + " on port number " + remotePort + "...");
