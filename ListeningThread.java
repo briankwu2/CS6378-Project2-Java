@@ -70,6 +70,10 @@ public class ListeningThread extends Thread
                 else if (type_of_message == 3)
                 {
                 }
+                else
+                {
+                    System.out.println("Incorrect Message Received from " + client_id);
+                }
 
             }
         } 
@@ -105,8 +109,7 @@ public class ListeningThread extends Thread
         if (time_stamp < 0) // Checks for incorrect time stamp
             return -1;
         int node_id = Integer.parseInt(string_array[2]);
-
-        if (node_id > params.last_time_stamp.size())
+        if (node_id > params.last_time_stamp.size() - 1)
             return -1;
         request.setTime_stamp(time_stamp);
         request.setNode_id(node_id);
@@ -129,12 +132,6 @@ public class ListeningThread extends Thread
         }
     }
 
-
-    public static void main(String[] args) {
-        Request r1 = new Request();
-
-        
-    }
 
 }
 
