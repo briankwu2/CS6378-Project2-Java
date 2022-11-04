@@ -17,7 +17,7 @@ public class ListeningThread extends Thread
         this.inSocket = inSocket;
         this.received_msgs = params.received_msgs;
         this.client_id = client_id;
-        System.out.println("Listening to " + client_id);
+        // System.out.println("Listening to " + client_id);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ListeningThread extends Thread
             while ((inputLine = inSocket.readLine()) != null)
             {
                 received_msgs.add(inputLine);
-                System.out.println("From node " + client_id + ":" +  inputLine);
+                System.out.println("[From Node " + client_id + "]: " +  inputLine);
             }
         } 
         catch (IOException e) {

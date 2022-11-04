@@ -48,7 +48,7 @@ public class Network extends Thread {
         try
         {
             hostName = InetAddress.getLocalHost().getHostName();
-            System.out.println("This machines host name is :" + hostName);
+            System.out.println("[CONFIG]: This machines host name is :" + hostName);
             for (int i = 0; i < node_info.size(); i++)
             {
                 if(node_info.get(i).hostNameMatch(hostName))
@@ -61,7 +61,7 @@ public class Network extends Thread {
             {
                 throw new Exception();
             }
-            System.out.println("This machine's node id is :" + my_node_id);
+            System.out.println("[CONFIG]: This machine's node id is :" + my_node_id);
         }
         catch (Exception e)
         {
@@ -135,7 +135,7 @@ public class Network extends Thread {
             }
          }
 
-        System.out.println("Waiting for other nodes...");
+        System.out.println("[SOCKET]: Waiting for other nodes...");
 
          while (socketMap.size() != max_nodes - 1)
          {
@@ -143,11 +143,11 @@ public class Network extends Thread {
             if (currSize != socketMap.size())
             {
                 currSize = socketMap.size();
-                System.out.println("Current connections are: " + socketMap.size() + '/' + (max_nodes - 1));
+                System.out.println("[SOCKET:]Current connections are: " + socketMap.size() + '/' + (max_nodes - 1));
             }
          }
 
-         System.out.println("All connections are secured");
+         System.out.println("[SOCKET]: All connections are secured");
 
     }
 
@@ -225,7 +225,9 @@ public class Network extends Thread {
 
                 if (check_nodes == max_nodes - 1)
                 {
-                    priority_queue.poll();
+                    Request pop = priority_queue.poll();
+                    System.out.print("[PRIO_Q]: Request popped off prioQ: ");
+                    pop.printRequest();
                     cs_ready.set(true);
                 }
 
@@ -339,7 +341,7 @@ public class Network extends Thread {
         if (type_of_message == 1)// For Request
         {
             priority_queue.add(request); // Pushes request onto priority queue
-            System.out.print("Request From " + request.getNode_id() + " Pushed onto Queue: ");
+            System.out.print("[PRIO_Q]: Request From " + request.getNode_id() + " Pushed onto Queue: ");
             request.printRequest();
 
             // Sends reply message to node it came from
@@ -353,7 +355,7 @@ public class Network extends Thread {
         else if (type_of_message == 2) // For Release
         {
             Request pop = priority_queue.poll(); // Pops the head request off of the prio queue
-            System.out.print("Request popped off prioQ: ");
+            System.out.print("[PRIO_Q]: Request popped off prioQ: ");
             pop.printRequest();
         }
         // A reply message does nothing but log the last time stamp of the message (alreadyd one above)
@@ -362,7 +364,7 @@ public class Network extends Thread {
         }
         else
         {
-            System.out.println("Incorrect Message Received from " + request.getNode_id());
+            System.out.println("[ERROR]: Incorrect Message Received from " + request.getNode_id());
         }
     }
     /**

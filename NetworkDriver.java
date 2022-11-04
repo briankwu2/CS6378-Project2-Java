@@ -33,7 +33,7 @@ public class NetworkDriver {
 
         net1.start(); // Start CL Protocol;
         System.out.println("Network Thread started...");
-
+        System.out.println("-------------------------");
 
         while(true)
         {
