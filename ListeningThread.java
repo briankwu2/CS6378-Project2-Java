@@ -25,6 +25,7 @@ public class ListeningThread extends Thread
         this.priority_queue = params.priority_queue;
         this.my_node_id = params.my_node_id;
         this.last_time_stamp = params.last_time_stamp;
+        System.out.println("Listening to " + client_id);
     }
 
     @Override

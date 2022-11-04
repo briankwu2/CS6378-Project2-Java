@@ -141,7 +141,7 @@ public class Network extends Thread {
             if (currSize != socketMap.size())
             {
                 currSize = socketMap.size();
-                System.out.println("Current connections are: " + socketMap.size() + '/' + max_nodes - 1);
+                System.out.println("Current connections are: " + socketMap.size() + '/' + (max_nodes - 1));
             }
          }
 
@@ -173,8 +173,10 @@ public class Network extends Thread {
                     increment_time_stamp();
                     String send_msg = "request " + last_time_stamp.get(my_node_id) + " " + my_node_id;
                     writeMap.get(i).println(send_msg); // Sends request message to node i
+                    System.out.println("Sent " + send_msg + "to " + i);
 
                 }
+                
                 application_request.set(false);
                 
             }
