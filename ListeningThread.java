@@ -42,10 +42,11 @@ public class ListeningThread extends Thread
             String inputLine;
             while ((inputLine = inSocket.readLine()) != null)
             {
-                Request request = null; 
+                Request request = new Request(); 
                 int type_of_message = handle_message(inputLine, request);
 
                 // Update my nodes time stamp on largest time stamp and adds one
+                
                 last_time_stamp.set(my_node_id, Integer.max(request.getTime_stamp(), last_time_stamp.get(my_node_id)) + 1);
                 last_time_stamp.set(client_id, request.getTime_stamp()); // Update client nodes time stamp
 
@@ -99,8 +100,14 @@ public class ListeningThread extends Thread
         }
 
         String type_of_request = string_array[0];
+
         int time_stamp = Integer.parseInt(string_array[1]);
+        if (time_stamp < 0) // Checks for incorrect time stamp
+            return -1;
         int node_id = Integer.parseInt(string_array[2]);
+
+        if (node_id > params.last_time_stamp.size())
+            return -1;
         request.setTime_stamp(time_stamp);
         request.setNode_id(node_id);
 
@@ -120,6 +127,13 @@ public class ListeningThread extends Thread
         {
             return -1;
         }
+    }
+
+
+    public static void main(String[] args) {
+        Request r1 = new Request();
+
+        
     }
 
 }

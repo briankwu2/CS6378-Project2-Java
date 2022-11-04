@@ -23,19 +23,18 @@ public class ServerClass extends Thread
      * Also initializes shared thread-safe lists such as SocketList and writeMap 
      * Passes on these sockets to the main Network class
      * 
-     * @param port Port that the Server is listening on
-     * @param socketMap List of connected sockets
-     * @param writeMap List of connected out streams that can be written to
+     * @param params SharedParameter Class
      * @throws IOException
      */
     public ServerClass(SharedParameters params) throws IOException
     {
-        serverSocket = new ServerSocket(port); // Creates a new server socket
         this.params = params;
         this.socketMap = params.socketMap;
         this.port = params.listenPort;
         this.writeMap = params.writeMap;
         this.priority_queue = params.priority_queue;
+        serverSocket = new ServerSocket(port); // Creates a new server socket
+        System.out.println("Server now listening on " + port);
     }
 
     @Override
@@ -90,7 +89,6 @@ public class ServerClass extends Thread
 
 
     public static void main(String[] args) throws IOException {
-        
     }
 
 
