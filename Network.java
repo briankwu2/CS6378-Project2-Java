@@ -115,6 +115,8 @@ public class Network extends Thread {
             requestConnection(hostConnect, hostPort); // Attempts to connect to the host
          }
 
+         System.out.println("All connections are secured");
+
     }
 
     /**

@@ -88,8 +88,6 @@ public class ServerClass extends Thread
     }
 
 
-    public static void main(String[] args) throws IOException {
-    }
 
 
 }
