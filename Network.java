@@ -80,6 +80,7 @@ public class Network extends Thread {
         this.hostName = node_info.get(my_node_id).hostName;
         this.listenPort = node_info.get(my_node_id).listenPort;
         this.max_nodes = NodeInfo.num_nodes;
+        my_request = new Request();
         priority_queue = new PriorityBlockingQueue<Request>();
 
         // Create the last_time_stamp array list and fill it with -1s.
