@@ -52,7 +52,8 @@ public class Application {
             csExeTimeRand = csExeTime + (rand.nextDouble() % 50) / 1000.0;
             interRequestDelayRand = interRequestDelay + (rand.nextDouble() % 50) / 1000;
 
-            System.out.println("[APPLICATION]: Trying Request " + currRequest);
+            System.out.println("[APPLICATION]: Trying Request " + currRequest++);
+            System.out.println("----------------------------------------------");
             maxRequests -= 1;
 
             request.set(true);
@@ -74,8 +75,8 @@ public class Application {
 
             System.out.println("[APPLICATION]: Time Executing is " +
                                 timeElapsed.toMillis() + "ms");
-            System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand + "ms");
-            System.out.println("[APPLICATION]: Done Executing ----------------------");
+            System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand * 1000 + "ms");
+            System.out.println("[APPLICATION]: Done Executing");
 
 
             // Waiting interRequestDelay before sending next request.
@@ -91,7 +92,7 @@ public class Application {
             }
 
             System.out.println("[APPLICATION]: Time Waited " + timeElapsed.toMillis() + "ms" );
-            System.out.println("[APPLICATION]: Time Should Have Waited " + timeElapsed.toMillis() + "ms");
+            System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand * 1000 + "ms");
 
         }
 
