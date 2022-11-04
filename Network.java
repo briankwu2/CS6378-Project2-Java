@@ -174,6 +174,9 @@ public class Network extends Thread {
                 my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
 
                 priority_queue.add(my_request);
+                System.out.print("Request From " + my_request.getNode_id() + " Pushed onto Queue: ");
+                my_request.printRequest();
+
                 for (int i = 0; i < max_nodes; i++)
                 {
                     if (i == my_node_id) continue; // Skip my own node
@@ -331,22 +334,27 @@ public class Network extends Thread {
         
         last_time_stamp.set(my_node_id, Integer.max(request.getTime_stamp(), last_time_stamp.get(my_node_id)) + 1);
         last_time_stamp.set(request.getNode_id(), request.getTime_stamp()); // Update client nodes time stamp
+        show_time_stamps(); // FIXME: Debugging Function
 
         if (type_of_message == 1)// For Request
         {
             priority_queue.add(request); // Pushes request onto priority queue
+            System.out.print("Request From " + request.getNode_id() + " Pushed onto Queue: ");
+            request.printRequest();
 
             // Sends reply message to node it came from
             // Also increments and updates last time stamp
             last_time_stamp.set(my_node_id, request.getTime_stamp() + 1);
             String send_msg = "reply " + last_time_stamp.get(my_node_id) + " " + my_node_id;
+            show_time_stamps(); // FIXME: Debugging Comments
             writeMap.get(request.getNode_id()).println(send_msg);
 
         }
         else if (type_of_message == 2) // For Release
         {
-            priority_queue.poll(); // Pops the head request off of the prio queue
-
+            Request pop = priority_queue.poll(); // Pops the head request off of the prio queue
+            System.out.print("Request popped off prioQ: ");
+            pop.printRequest();
         }
         // A reply message does nothing but log the last time stamp of the message (alreadyd one above)
         else if (type_of_message == 3)
@@ -410,6 +418,22 @@ public class Network extends Thread {
     {
         last_time_stamp.set(my_node_id, last_time_stamp.get(my_node_id) + 1); // Increments my time stamp
     }
+
+    /**
+     * Shows current time stamp vector
+     */
+    public void show_time_stamps()
+    {
+        System.out.print("Current Time Stamps: <");
+        for (int i = 0; i < last_time_stamp.size(); i++)
+        {
+            if (i != last_time_stamp.size() - 1)
+                System.out.print(last_time_stamp.get(i) + ", ");
+            else
+                System.out.println(last_time_stamp.get(i) + ">");
+        }
+    }
+
     /** 
      * Closes all sockets and resources used.
      */
