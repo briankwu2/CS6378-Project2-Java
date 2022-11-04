@@ -133,19 +133,18 @@ public class Network extends Thread {
             }
          }
 
+        System.out.println("Waiting for other nodes...");
+
          while (socketMap.size() != max_nodes)
          {
-            System.out.println("Waiting for other nodes...");
-            System.out.println("Current connections are: " + socketMap.size() + '/' + max_nodes);
-            try
+            int currSize = socketMap.size();
+            if (currSize != socketMap.size())
             {
-                Thread.sleep(5000);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
+                currSize = socketMap.size();
+                System.out.println("Current connections are: " + socketMap.size() + '/' + max_nodes);
             }
          }
+
          System.out.println("All connections are secured");
 
     }
