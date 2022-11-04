@@ -135,7 +135,7 @@ public class Network extends Thread {
 
         System.out.println("Waiting for other nodes...");
 
-         while (socketMap.size() != max_nodes)
+         while (socketMap.size() != max_nodes - 1)
          {
             int currSize = socketMap.size();
             if (currSize != socketMap.size())
