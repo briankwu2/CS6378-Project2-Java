@@ -29,7 +29,6 @@ public class NetworkDriver {
 
         if (InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0)
         {
-            System.out.println("Starting request!");
             a1.set(true);  
         }
 
