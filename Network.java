@@ -171,7 +171,9 @@ public class Network extends Thread {
             if (application_request.get())
             {
                 increment_time_stamp();
+                show_time_stamps();
                 my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
+                
 
                 priority_queue.add(my_request);
                 System.out.print("[MY_REQUEST PRIO_Q]: Request From " + my_request.getNode_id() + " Pushed onto Queue: ");
@@ -182,8 +184,10 @@ public class Network extends Thread {
                     if (i == my_node_id) continue; // Skip my own node
                     
                     increment_time_stamp();
+                    show_time_stamps();
                     String send_msg = "request " + my_request.getTime_stamp() + " " + my_node_id;
                     writeMap.get(i).println(send_msg); // Sends request message to node i
+                    System.out.println("[TO NODE " + i + "]: " + send_msg);
 
                 }
 
@@ -198,6 +202,7 @@ public class Network extends Thread {
             if (
                 !cs_ready.get() &&
                 !priority_queue.isEmpty() && 
+                my_request != null &&
                 my_request.compareTo(priority_queue.peek()) == 0)
             {
                 // Second Condition
@@ -227,6 +232,7 @@ public class Network extends Thread {
                 {
                     Request pop = priority_queue.poll();
                     System.out.print("[PRIO_Q]: Request popped off prioQ: ");
+                    my_request = null; // Erases my_request
                     pop.printRequest();
                     cs_ready.set(true);
                 }
@@ -244,8 +250,10 @@ public class Network extends Thread {
 
                     // Send request messages to all other nodes
                     increment_time_stamp();
+                    show_time_stamps();
                     String send_msg = "release " + last_time_stamp.get(my_node_id) + " " + my_node_id;
                     writeMap.get(i).println(send_msg);
+                    System.out.println("[TO NODE " + i + "]: " + send_msg);
                 }
                 release_flag.set(false); 
             }
@@ -350,6 +358,7 @@ public class Network extends Thread {
             String send_msg = "reply " + last_time_stamp.get(my_node_id) + " " + my_node_id;
             show_time_stamps(); // FIXME: Debugging Comments
             writeMap.get(request.getNode_id()).println(send_msg);
+            System.out.println("[TO NODE " + request.getNode_id() + "]: " + send_msg);
 
         }
         else if (type_of_message == 2) // For Release
