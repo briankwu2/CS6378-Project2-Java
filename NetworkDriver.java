@@ -47,18 +47,18 @@ public class NetworkDriver {
             }
         }
 
-        request.set(true);
+        // request.set(true);
 
-        while(true)
-        {
-            if (ready.get())
-            {
-                System.out.println("CS Is Ready!");
-                ready.set(false);
-                release.set(true);
-                break;
-            }
-        }
+        // while(true)
+        // {
+        //     if (ready.get())
+        //     {
+        //         System.out.println("CS Is Ready!");
+        //         ready.set(false);
+        //         release.set(true);
+        //         break;
+        //     }
+        // }
 
     }
 }
