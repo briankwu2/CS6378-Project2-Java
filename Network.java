@@ -69,6 +69,7 @@ public class Network extends Thread {
         this.node_info = node_info;
         this.hostName = node_info.get(my_node_id).hostName;
         this.listenPort = node_info.get(my_node_id).listenPort;
+        this.max_nodes = NodeInfo.num_nodes;
         priority_queue = new PriorityBlockingQueue<Request>();
 
         // Create the last_time_stamp array list and fill it with -1s.
@@ -112,7 +113,14 @@ public class Network extends Thread {
          {
             String hostConnect = node_info.get(i).hostName;
             int hostPort= node_info.get(i).listenPort;
-            requestConnection(hostConnect, hostPort); // Attempts to connect to the host
+            try
+            {
+                requestConnection(hostConnect, hostPort); // Attempts to connect to the host
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
          }
 
          System.out.println("All connections are secured");
@@ -218,7 +226,7 @@ public class Network extends Thread {
     }
 
     // Requests to connect with another node's server thread and establish a connection
-    public Socket requestConnection(String remoteHost, int remotePort)
+    public Socket requestConnection(String remoteHost, int remotePort) throws Exception
     {
         System.out.println("Attempting to connect to " + remoteHost + " on port number " + remotePort + "...");
 
@@ -266,6 +274,7 @@ public class Network extends Thread {
             catch (Exception e)
             {   
                 System.out.println("Unable to connect to the port... retrying...");
+                Thread.sleep(5000);
             }
         }
     }
