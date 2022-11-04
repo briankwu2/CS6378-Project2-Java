@@ -47,11 +47,13 @@ public class Network extends Thread {
         try
         {
             hostName = InetAddress.getLocalHost().getHostName();
+            System.out.println("This machines host name is :" + hostName);
             my_node_id = params.findNodeID(hostName);
             if(my_node_id == -1) // Running on the wrong machine
             {
                 throw new Exception();
             }
+            System.out.println("This machine's node id is :" + my_node_id);
         }
         catch (Exception e)
         {
