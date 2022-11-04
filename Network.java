@@ -202,8 +202,9 @@ public class Network extends Thread {
                     {
                         if(my_request.getNode_id() < i)
                         {
-                            cs_ready.set(true);
+                            // cs_ready.set(true);
                             priority_queue.poll(); // Pop off my request
+                            System.out.println("The priority queue is " + priority_queue.size());
                         }
 
                     }
