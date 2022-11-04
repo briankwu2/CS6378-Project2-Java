@@ -203,6 +203,7 @@ public class Network extends Thread {
                         if(my_request.getNode_id() < i)
                         {
                             cs_ready.set(true);
+                            priority_queue.poll(); // Pop off my request
                         }
 
                     }
@@ -225,7 +226,6 @@ public class Network extends Thread {
                     String send_msg = "release " + last_time_stamp.get(my_node_id) + " " + my_node_id;
                     writeMap.get(i).println(send_msg);
                 }
-                priority_queue.poll(); // Pop off my request
                 release_flag.set(false); 
             }
         }
