@@ -172,12 +172,12 @@ public class Network extends Thread {
                     
                     increment_time_stamp();
                     String send_msg = "request " + last_time_stamp.get(my_node_id) + " " + my_node_id;
-                    System.out.println("Sends " + send_msg + " to node " + i);
                     writeMap.get(i).println(send_msg); // Sends request message to node i
 
                 }
 
                 application_request.set(false);
+                System.out.println("Application Request is " + application_request.get());
                 
             }
 
@@ -197,14 +197,17 @@ public class Network extends Thread {
                 {
                     if (i == my_node_id) continue;
 
-                    else if (my_request.getTime_stamp() < last_time_stamp.get(i)) cs_ready.set(true);
+                    else if (my_request.getTime_stamp() < last_time_stamp.get(i))
+                    {
+                        priority_queue.poll(); // Pops off my request
+                        cs_ready.set(true);
+                    }
                     else if (my_request.getTime_stamp() == last_time_stamp.get(i))
                     {
                         if(my_request.getNode_id() < i)
                         {
-                            // cs_ready.set(true);
+                            cs_ready.set(true);
                             priority_queue.poll(); // Pop off my request
-                            System.out.println("The priority queue is " + priority_queue.size());
                         }
 
                     }

@@ -40,7 +40,7 @@ public class NetworkDriver {
         {
             if (a2.get())
             {
-                // System.out.println("CS Is Ready!");
+                System.out.println("CS Is Ready!");
                 a2.set(false);
             }
         }
