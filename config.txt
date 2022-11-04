@@ -1,0 +1,9 @@
+#num_nodes interReqDelay csExeTime maxRequests
+6 10 15 100
+
+0 dc01 1245
+1 dc02 1251
+2 dc03 4256
+3 dc04 5398
+4 dc05 2415
+5 dc06 5392
