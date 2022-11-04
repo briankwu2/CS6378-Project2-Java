@@ -165,15 +165,13 @@ public class Network extends Thread {
                 my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
 
                 priority_queue.add(my_request);
-                for (int i = 0; i < writeMap.size(); i++)
+                for (int i = 0; i < max_nodes; i++)
                 {
                     if (i == my_node_id) continue; // Skip my own node
-
                     
                     increment_time_stamp();
-                    System.out.println("Size of writeMap is " + writeMap.size());
                     String send_msg = "request " + last_time_stamp.get(my_node_id) + " " + my_node_id;
-
+                    System.out.println("Sends " + send_msg + " to node " + i);
                     writeMap.get(i).println(send_msg); // Sends request message to node i
 
                 }
