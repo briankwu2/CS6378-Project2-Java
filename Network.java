@@ -225,7 +225,7 @@ public class Network extends Thread {
 
                 if (check_nodes == max_nodes - 1)
                 {
-                    priority_queue.poll();
+                    Request pop = priority_queue.poll();
                     System.out.print("[PRIO_Q]: Request popped off prioQ: ");
                     pop.printRequest();
                     cs_ready.set(true);
