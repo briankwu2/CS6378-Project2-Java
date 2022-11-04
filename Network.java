@@ -35,6 +35,7 @@ public class Network extends Thread {
     private Map<Integer, PrintWriter> writeMap = new ConcurrentHashMap<>(); // Creates a thread-safe output channel list
     private List<Integer> last_time_stamp = Collections.synchronizedList(new ArrayList<Integer>()); // Creates a thread-safe time stamp array
     private List<NodeInfo> node_info; // 
+    private List<String> received_msgs = Collections.synchronizedList(new ArrayList<String>());
     private PriorityBlockingQueue<Request> priority_queue;
 
     /* Public Constructor that assigns the node number, hostname, and listening port.
@@ -90,7 +91,7 @@ public class Network extends Thread {
         }
 
         // Creates a shared parameters class to share with threads
-        params = new SharedParameters(my_node_id, listenPort, socketMap, writeMap, last_time_stamp, priority_queue,node_info); 
+        params = new SharedParameters(my_node_id, listenPort, socketMap, writeMap, last_time_stamp, priority_queue,node_info, received_msgs); 
 
         createServerClass(); // Creates a server thread that listens for connecting nodes and returns a socket to the connecting node
 
@@ -158,6 +159,14 @@ public class Network extends Thread {
     {
         while(true)
         {
+            // Process any messages received
+
+            while (!received_msgs.isEmpty())
+            {
+                process_msgs(received_msgs.get(0)); // Processes the messages
+                received_msgs.remove(0); // Dequeues the messages
+            }
+
             // If CS_enter() is called, push request onto priority queue and send request message to all other nodes
             if (application_request.get())
             {
@@ -310,6 +319,89 @@ public class Network extends Thread {
     }
 
 
+    public void process_msgs(String inputLine)
+    {
+        Request request = new Request(); 
+        int type_of_message = handle_message(inputLine, request);
+
+        // Update my nodes time stamp on largest time stamp and adds one
+        
+        last_time_stamp.set(my_node_id, Integer.max(request.getTime_stamp(), last_time_stamp.get(my_node_id)) + 1);
+        last_time_stamp.set(request.getNode_id(), request.getTime_stamp()); // Update client nodes time stamp
+
+        if (type_of_message == 1)// For Request
+        {
+            priority_queue.add(request); // Pushes request onto priority queue
+
+            // Sends reply message to node it came from
+            // Also increments and updates last time stamp
+            last_time_stamp.set(my_node_id, request.getTime_stamp() + 1);
+            String send_msg = "reply " + last_time_stamp.get(my_node_id) + " " + my_node_id;
+            writeMap.get(request.getNode_id()).println(send_msg);
+
+        }
+        else if (type_of_message == 2) // For Release
+        {
+            priority_queue.poll(); // Pops the head request off of the prio queue
+
+        }
+        // A reply message does nothing but log the last time stamp of the message (alreadyd one above)
+        else if (type_of_message == 3)
+        {
+        }
+        else
+        {
+            System.out.println("Incorrect Message Received from " + request.getNode_id());
+        }
+    }
+    /**
+     * 
+     * @param message
+     * @param request
+     * @return Returns based on type of message or error:
+     * 1 Request
+     * 2 Release
+     * 3 Reply
+     * -1 for improperly formatted message
+     */
+    public int handle_message(String message, Request request)
+    {
+        String string_array[] = message.split(" ");
+
+        // Checks if message is correct amount of tokens
+        if (!(string_array.length == 3))
+        {
+            return -1;
+        }
+
+        String type_of_request = string_array[0];
+
+        int time_stamp = Integer.parseInt(string_array[1]);
+        if (time_stamp < 0) // Checks for incorrect time stamp
+            return -1;
+        int node_id = Integer.parseInt(string_array[2]);
+        if (node_id > params.last_time_stamp.size() - 1)
+            return -1;
+        request.setTime_stamp(time_stamp);
+        request.setNode_id(node_id);
+
+        if (type_of_request.compareTo("request") == 0)
+        {
+            return 1;
+        }
+        else if (type_of_request.compareTo("release") == 0)
+        {
+            return 2;
+        }
+        else if (type_of_request.compareTo("reply") == 0)
+        {
+            return 3;
+        }
+        else // Wrong formatted message
+        {
+            return -1;
+        }
+    }
 
     public void increment_time_stamp()
     {

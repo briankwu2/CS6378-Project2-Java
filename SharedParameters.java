@@ -15,7 +15,8 @@ public class SharedParameters {
         Map<Integer, PrintWriter> writeMap,
         List<Integer> last_time_stamp,
         PriorityBlockingQueue<Request> priority_queue,
-        List<NodeInfo> node_info)
+        List<NodeInfo> node_info,
+        List<String> received_msgs)
     {
         this.my_node_id = my_node_id;
         this.listenPort = listenPort;
@@ -24,6 +25,7 @@ public class SharedParameters {
         this.last_time_stamp = last_time_stamp;
         this.priority_queue = priority_queue;
         this.node_info = node_info;
+        this.received_msgs = received_msgs;
     }
 
     // Variables
@@ -34,6 +36,7 @@ public class SharedParameters {
     public List<Integer> last_time_stamp;
     public PriorityBlockingQueue<Request> priority_queue;
     public List<NodeInfo> node_info;
+    public List<String> received_msgs;
 
     /**
      * Finds the node id of a given host name.
