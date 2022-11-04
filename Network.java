@@ -174,7 +174,7 @@ public class Network extends Thread {
                 my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
 
                 priority_queue.add(my_request);
-                System.out.print("Request From " + my_request.getNode_id() + " Pushed onto Queue: ");
+                System.out.print("[MY_REQUEST PRIO_Q]: Request From " + my_request.getNode_id() + " Pushed onto Queue: ");
                 my_request.printRequest();
 
                 for (int i = 0; i < max_nodes; i++)
@@ -182,7 +182,7 @@ public class Network extends Thread {
                     if (i == my_node_id) continue; // Skip my own node
                     
                     increment_time_stamp();
-                    String send_msg = "request " + last_time_stamp.get(my_node_id) + " " + my_node_id;
+                    String send_msg = "request " + my_request.getTime_stamp() + " " + my_node_id;
                     writeMap.get(i).println(send_msg); // Sends request message to node i
 
                 }
@@ -225,7 +225,7 @@ public class Network extends Thread {
 
                 if (check_nodes == max_nodes - 1)
                 {
-                    Request pop = priority_queue.poll();
+                    priority_queue.poll();
                     System.out.print("[PRIO_Q]: Request popped off prioQ: ");
                     pop.printRequest();
                     cs_ready.set(true);
