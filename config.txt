@@ -1,4 +1,5 @@
 # this is a comment
+# num_nodes interRequestDelay (ms) csExeTime(ms) maxRequests
 2 6 10 100
 
 0 dc01 1324 ### afioea

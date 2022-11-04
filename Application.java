@@ -34,14 +34,20 @@ public class Application {
         System.out.println("Network Thread started...");
         System.out.println("-------------------------");
 
-        // Currently testing 
-        double interRequestDelay = 20.0 / 1000.0;
-        double csExeTime = 10.0 / 1000.0;
-        int maxRequests = 5;
+        // Mean Values of Global Parameters
+        double interRequestDelay = NodeInfo.interRequestDelay; // In milliseconds
+        double csExeTime = NodeInfo.csExeTime; // In milliseconds
+        int maxRequests = NodeInfo.maxRequests;
 
-        double csExeTimeRand = 0.0;
-        double interRequestDelayRand = 0.0;
-        Random rand = new Random();
+        // Random number generators
+        RandomNumberGenerator rng = RandomNumberGenerator.Exponential;
+
+
+        // Actual Time Values
+        double csExeTimeRand;
+        double interRequestDelayRand;
+
+        // Duration to time CS Execution Time
         int currRequest = 1;
         Instant start;
         Instant end;
@@ -49,12 +55,13 @@ public class Application {
 
         while (maxRequests > 0)
         {
-            csExeTimeRand = csExeTime + (rand.nextDouble() % 50) / 1000.0;
-            interRequestDelayRand = interRequestDelay + (rand.nextDouble() % 50) / 1000;
+
+            interRequestDelayRand = rng.getRandom(interRequestDelay);
+            csExeTimeRand = rng.getRandom(csExeTime);
 
             System.out.println("[APPLICATION]: Trying Request " + currRequest++);
             System.out.println("----------------------------------------------");
-            maxRequests -= 1;
+            maxRequests--;
 
             request.set(true);
 
@@ -64,9 +71,9 @@ public class Application {
 
             ready.set(false); // Ready no longer true
 
-            start =  Instant.now();
             end = Instant.now();
-            timeElapsed = Duration.between(start, end);
+            start =  Instant.now();
+            timeElapsed = Duration.between(end, end); // To set a timeElapsed of 0.
             while ((timeElapsed.toMillis() / 1000.0) < csExeTimeRand)
             {
                 end = Instant.now();

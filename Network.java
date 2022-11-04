@@ -232,8 +232,12 @@ public class Network extends Thread {
                 {
                     Request pop = priority_queue.poll();
                     System.out.print("[PRIO_Q]: Request popped off prioQ: ");
-                    my_request = null; // Erases my_request
                     pop.printRequest();
+
+                    System.out.print("[NETWORK]: CS Entered on ");
+                    show_time_stamps();
+
+                    my_request = null; // Erases my_request
                     cs_ready.set(true);
                 }
 
