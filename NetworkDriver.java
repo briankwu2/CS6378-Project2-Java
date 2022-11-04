@@ -36,14 +36,19 @@ public class NetworkDriver {
         net1.start(); // Start CL Protocol;
         System.out.println("Network Thread started...");
 
-        while(true)
+        while(!ready.get())
         {
-            if (ready.get())
-            {
-                System.out.println("CS Is Ready!");
-                ready.set(false);
-                release.set(true);
-            }
+            System.out.println("CS Is Ready!");
+            ready.set(false);
+            release.set(true);
+        }
+
+        request.set(true);
+        while(!ready.get())
+        {
+            System.out.println("CS Is Ready!");
+            ready.set(false);
+            release.set(true);
         }
 
     }
