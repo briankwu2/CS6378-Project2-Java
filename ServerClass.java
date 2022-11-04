@@ -62,7 +62,7 @@ public class ServerClass extends Thread
                     writeMap.put(client_id, out);
                 }
 
-                // Try-with-resources block that opens up a listening thread that will receive and interpret incoming messages from this client node
+                // Try block that opens up a listening thread that will receive and interpret incoming messages from this client node
                 try 
                 {
 

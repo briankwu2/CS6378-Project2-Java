@@ -27,6 +27,7 @@ public class NetworkDriver {
         Network net1 = new Network(parser.get_node_info(), atomicFlags);
         System.out.println("Done!");
 
+
         if (InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0)
         {
             a1.set(true);  

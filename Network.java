@@ -172,8 +172,8 @@ public class Network extends Thread {
                     
                     increment_time_stamp();
                     String send_msg = "request " + last_time_stamp.get(my_node_id) + " " + my_node_id;
+
                     writeMap.get(i).println(send_msg); // Sends request message to node i
-                    System.out.println("Sent " + send_msg + "to " + i);
 
                 }
 
@@ -279,6 +279,7 @@ public class Network extends Thread {
                         PrintWriter out = new PrintWriter(connectSocket.getOutputStream(),true);
                         writeMap.put(client_id, out);
                     }
+
                     try
                     {
                         BufferedReader in = new BufferedReader(
@@ -308,8 +309,6 @@ public class Network extends Thread {
     public void debug_send_message(int node, String message)
     {
         System.out.println("There is " + writeMap.size() + " amount of write ports");
-        writeMap.get(node).println(message);
-        System.out.println(message + " to " + node + " has been sent");
     }
 
     public void increment_time_stamp()
