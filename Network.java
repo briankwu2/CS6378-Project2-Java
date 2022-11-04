@@ -42,13 +42,20 @@ public class Network extends Thread {
      */
     public Network(List<NodeInfo> node_info, Map<String, AtomicBoolean> flagMap) 
     {
-      
+
         // Find which node this machine is 
         try
         {
             hostName = InetAddress.getLocalHost().getHostName();
             System.out.println("This machines host name is :" + hostName);
-            my_node_id = params.findNodeID(hostName);
+            for (int i = 0; i < node_info.size(); i++)
+            {
+                if(node_info.get(i).hostNameMatch(hostName))
+                {
+                    my_node_id = node_info.get(i).node_id;
+                    break;
+                }
+            }
             if(my_node_id == -1) // Running on the wrong machine
             {
                 throw new Exception();
@@ -58,7 +65,8 @@ public class Network extends Thread {
         catch (Exception e)
         {
             e.printStackTrace();
-        }
+        }     
+        
 
         // Gets the AtomicBooleans from passed in map.
         this.flagMap = flagMap;
