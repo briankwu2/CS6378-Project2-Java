@@ -72,8 +72,8 @@ public class Application {
             ready.set(false); // Ready no longer true
 
             end = Instant.now();
-            start =  Instant.now();
             timeElapsed = Duration.between(end, end); // To set a timeElapsed of 0.
+            start =  Instant.now();
             while ((timeElapsed.toMillis() / 1000.0) < csExeTimeRand)
             {
                 end = Instant.now();
