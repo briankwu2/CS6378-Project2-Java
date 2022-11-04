@@ -176,7 +176,7 @@ public class Network extends Thread {
                     System.out.println("Sent " + send_msg + "to " + i);
 
                 }
-                
+
                 application_request.set(false);
                 
             }
@@ -305,6 +305,12 @@ public class Network extends Thread {
     }
 
 
+    public void debug_send_message(int node, String message)
+    {
+        System.out.println("There is " + writeMap.size() + " amount of write ports");
+        writeMap.get(node).println(message);
+        System.out.println(message + " to " + node + " has been sent");
+    }
 
     public void increment_time_stamp()
     {
