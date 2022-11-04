@@ -141,7 +141,7 @@ public class Network extends Thread {
             if (currSize != socketMap.size())
             {
                 currSize = socketMap.size();
-                System.out.println("Current connections are: " + socketMap.size() + '/' + max_nodes);
+                System.out.println("Current connections are: " + socketMap.size() + '/' + max_nodes - 1);
             }
          }
 
