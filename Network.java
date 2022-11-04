@@ -220,7 +220,7 @@ public class Network extends Thread {
             if (release_flag.get())
             {
                 // To send a release message to all other nodes
-                for (int i = 0; i < writeMap.size(); i++)
+                for (int i = 0; i < max_nodes; i++)
                 {
                     // Ignore sending anything to my own node
                     if(i == my_node_id) continue;
