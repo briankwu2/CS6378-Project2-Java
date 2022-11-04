@@ -200,25 +200,30 @@ public class Network extends Thread {
                 // Second Condition
                 // FIXME: Double check this condition/protocol
                 // Check if my request's time stamp is lower than all of the other node's latest time stamp messages
+                int check_nodes = 0;
                 for (int i = 0; i < last_time_stamp.size(); i++)
                 {
-                    if (i == my_node_id) continue;
 
+                    if (i == my_node_id) continue;
                     else if (my_request.getTime_stamp() < last_time_stamp.get(i))
                     {
-                        priority_queue.poll(); // Pops off my request
-                        cs_ready.set(true);
+                        check_nodes++;
                     }
                     else if (my_request.getTime_stamp() == last_time_stamp.get(i))
                     {
                         if(my_request.getNode_id() < i)
                         {
-                            cs_ready.set(true);
-                            priority_queue.poll(); // Pop off my request
+                            check_nodes++;
                         }
 
                     }
 
+                }
+
+                if (check_nodes == max_nodes - 1)
+                {
+                    priority_queue.poll();
+                    cs_ready.set(true);
                 }
 
             }

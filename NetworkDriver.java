@@ -28,15 +28,14 @@ public class NetworkDriver {
         System.out.println("Done!");
 
         boolean node_zero = InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0;
-        if (node_zero)
-        {
-            request.set(true);  
-        }
+
+        request.set(true);  
 
         net1.start(); // Start CL Protocol;
         System.out.println("Network Thread started...");
 
-        while(true && node_zero)
+
+        while(true)
         {
             if (ready.get())
             {
@@ -46,19 +45,6 @@ public class NetworkDriver {
                 break;
             }
         }
-
-        // request.set(true);
-
-        // while(true)
-        // {
-        //     if (ready.get())
-        //     {
-        //         System.out.println("CS Is Ready!");
-        //         ready.set(false);
-        //         release.set(true);
-        //         break;
-        //     }
-        // }
 
     }
 }
