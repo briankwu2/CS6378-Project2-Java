@@ -27,13 +27,14 @@ public class NetworkDriver {
         Network net1 = new Network(parser.get_node_info(), atomicFlags);
         System.out.println("Done!");
 
-        if (InetAddress.getLocalHost().getHostName() == "dc01.utdallas.edu")
+        if (InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0)
         {
-            a1.set(true); // 
+            System.out.println("Starting request!");
+            a1.set(true);  
         }
 
         net1.start(); // Start CL Protocol;
-
+        System.out.println("Network Thread started...");
 
         while(true)
         {
