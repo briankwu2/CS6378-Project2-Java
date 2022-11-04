@@ -12,17 +12,17 @@ public class NetworkDriver {
         parser.parseFile("config.txt");
 
         Map<String, AtomicBoolean> atomicFlags = new ConcurrentHashMap<String, AtomicBoolean>();
-        AtomicBoolean a1 = new AtomicBoolean();
-        AtomicBoolean a2 = new AtomicBoolean();
-        AtomicBoolean a3 = new AtomicBoolean();
+        AtomicBoolean request = new AtomicBoolean();
+        AtomicBoolean ready = new AtomicBoolean();
+        AtomicBoolean release = new AtomicBoolean();
 
-        a1.set(false);
-        a2.set(false);
-        a3.set(false);
+        request.set(false);
+        ready.set(false);
+        release.set(false);
 
-        atomicFlags.put("request", a1);
-        atomicFlags.put("ready", a2);
-        atomicFlags.put("release", a3);
+        atomicFlags.put("request", request);
+        atomicFlags.put("ready", ready);
+        atomicFlags.put("release", release);
 
         Network net1 = new Network(parser.get_node_info(), atomicFlags);
         System.out.println("Done!");
@@ -30,7 +30,7 @@ public class NetworkDriver {
 
         if (InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0)
         {
-            a1.set(true);  
+            request.set(true);  
         }
 
         net1.start(); // Start CL Protocol;
@@ -38,10 +38,11 @@ public class NetworkDriver {
 
         while(true)
         {
-            if (a2.get())
+            if (ready.get())
             {
                 System.out.println("CS Is Ready!");
-                a2.set(false);
+                ready.set(false);
+                release.set(true);
             }
         }
 
