@@ -148,6 +148,7 @@ public class Network extends Thread {
             // If CS_enter() is called, push request onto priority queue and send request message to all other nodes
             if (application_request.get())
             {
+                System.out.println("Pushing my request onto the priority queue");
                 increment_time_stamp();
                 my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
 

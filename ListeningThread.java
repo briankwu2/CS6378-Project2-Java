@@ -42,6 +42,7 @@ public class ListeningThread extends Thread
             String inputLine;
             while ((inputLine = inSocket.readLine()) != null)
             {
+                System.out.println("From node " + client_id + ":" +  inputLine);
                 Request request = new Request(); 
                 int type_of_message = handle_message(inputLine, request);
 
