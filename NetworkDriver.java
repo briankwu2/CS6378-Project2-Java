@@ -27,8 +27,8 @@ public class NetworkDriver {
         Network net1 = new Network(parser.get_node_info(), atomicFlags);
         System.out.println("Done!");
 
-
-        if (InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0)
+        boolean node_zero = InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0;
+        if (node_zero)
         {
             request.set(true);  
         }
@@ -36,19 +36,28 @@ public class NetworkDriver {
         net1.start(); // Start CL Protocol;
         System.out.println("Network Thread started...");
 
-        while(!ready.get())
+        while(true && node_zero)
         {
-            System.out.println("CS Is Ready!");
-            ready.set(false);
-            release.set(true);
+            if (ready.get())
+            {
+                System.out.println("CS Is Ready!");
+                ready.set(false);
+                release.set(true);
+                break;
+            }
         }
 
         request.set(true);
-        while(!ready.get())
+
+        while(true)
         {
-            System.out.println("CS Is Ready!");
-            ready.set(false);
-            release.set(true);
+            if (ready.get())
+            {
+                System.out.println("CS Is Ready!");
+                ready.set(false);
+                release.set(true);
+                break;
+            }
         }
 
     }
