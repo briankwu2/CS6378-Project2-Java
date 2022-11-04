@@ -31,7 +31,6 @@ public class NetworkDriver {
         if (InetAddress.getLocalHost().getHostName().compareTo("dc01.utdallas.edu") == 0)
         {
             a1.set(true);  
-            net1.debug_send_message(1, "test message!");
         }
 
         net1.start(); // Start CL Protocol;

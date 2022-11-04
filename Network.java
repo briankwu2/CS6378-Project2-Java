@@ -171,6 +171,7 @@ public class Network extends Thread {
 
                     
                     increment_time_stamp();
+                    System.out.println("Size of writeMap is " + writeMap.size());
                     String send_msg = "request " + last_time_stamp.get(my_node_id) + " " + my_node_id;
 
                     writeMap.get(i).println(send_msg); // Sends request message to node i
@@ -306,10 +307,6 @@ public class Network extends Thread {
     }
 
 
-    public void debug_send_message(int node, String message)
-    {
-        System.out.println("There is " + writeMap.size() + " amount of write ports");
-    }
 
     public void increment_time_stamp()
     {
