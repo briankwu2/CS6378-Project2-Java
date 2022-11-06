@@ -38,6 +38,9 @@ public class Network extends Thread {
     private List<String> received_msgs = Collections.synchronizedList(new ArrayList<String>());
     private PriorityBlockingQueue<Request> priority_queue;
 
+    // For writing to a file for file testing
+    
+
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
      */

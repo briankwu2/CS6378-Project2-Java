@@ -1,9 +1,6 @@
-import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.*;
-import java.net.InetAddress;
-import java.util.Random;
 import java.time.*;
 
 
@@ -65,6 +62,7 @@ public class Application {
 
             request.set(true);
 
+            // Do nothing while waiting for ready flag to be available
             while (!ready.get())
             {
             }
