@@ -105,7 +105,7 @@ public class Application {
                                 timeElapsed.toMillis() + "ms");
             System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand * 1000 + "ms");
             System.out.println("[APPLICATION]: Done Executing");
-            metricFile.write(timeElapsed + ", ");
+            metricFile.write(timeElapsed.toString() + ", ");
 
             // Waiting interRequestDelay before sending next request.
             release.set(true);
@@ -121,7 +121,7 @@ public class Application {
 
             System.out.println("[APPLICATION]: Time Waited " + timeElapsed.toMillis() + "ms" );
             System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand * 1000 + "ms");
-            metricFile.write(timeElapsed + "\n");
+            metricFile.write(timeElapsed.toString() + "\n");
 
         }
 

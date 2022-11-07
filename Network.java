@@ -254,7 +254,7 @@ public class Network extends Thread {
                     show_time_stamps();
 
                     try {
-                        testerFile.write("Starting Time Stamp: " + last_time_stamp.get(my_node_id));
+                        testerFile.write(last_time_stamp.get(my_node_id));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -270,7 +270,7 @@ public class Network extends Thread {
 
                 try
                 {
-                    testerFile.write("End Time Stamp: " + last_time_stamp.get(my_node_id) + "\n");
+                    testerFile.write(" " + last_time_stamp.get(my_node_id) + "\n");
                 }
                 catch (IOException e)
                 {
