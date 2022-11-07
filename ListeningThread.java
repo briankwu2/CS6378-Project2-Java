@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 public class ListeningThread extends Thread
 {
@@ -7,6 +8,8 @@ public class ListeningThread extends Thread
     private SharedParameters params;
     private List<String> received_msgs;
     private int client_id;
+    private AtomicBoolean endThread;
+    
     /** Constructor to pass in the listening socket and priority queue 
      * 
      * @param inSocket
@@ -16,6 +19,7 @@ public class ListeningThread extends Thread
         this.inSocket = inSocket;
         this.received_msgs = params.received_msgs;
         this.client_id = client_id;
+        this.endThread = params.endThread;
         // System.out.println("Listening to " + client_id);
     }
 
@@ -32,7 +36,7 @@ public class ListeningThread extends Thread
         try  
         {
             String inputLine;
-            while ((inputLine = inSocket.readLine()) != null)
+            while ((inputLine = inSocket.readLine()) != null && !endThread.get())
             {
                 received_msgs.add(inputLine);
                 System.out.println("[From Node " + client_id + "]: " +  inputLine);

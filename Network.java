@@ -6,6 +6,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Network extends Thread {
+
      /* 
      * 1. Connect to all respective nodes (client threads will connect to neighbors)
      *      0 -> 1,2,3,4
@@ -29,7 +30,7 @@ public class Network extends Thread {
     AtomicBoolean application_request;
     AtomicBoolean cs_ready;
     AtomicBoolean release_flag;
-
+    AtomicBoolean endThread;
     // I/O Structures
     private Map<Integer, Socket> socketMap = new ConcurrentHashMap<>();// Creates a thread-safe Socket List
     private Map<Integer, PrintWriter> writeMap = new ConcurrentHashMap<>(); // Creates a thread-safe output channel list
@@ -39,7 +40,7 @@ public class Network extends Thread {
     private PriorityBlockingQueue<Request> priority_queue;
 
     // For writing to a file for file testing
-    
+    private BufferedWriter testerFile;
 
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
@@ -70,14 +71,6 @@ public class Network extends Thread {
         {
             e.printStackTrace();
         }     
-        
-
-        // Gets the AtomicBooleans from passed in map.
-        this.flagMap = flagMap;
-        application_request = flagMap.get("request");
-        cs_ready = flagMap.get("ready");
-        release_flag = flagMap.get("release");
-
 
         // Instantiate node information
         this.node_info = node_info;
@@ -87,16 +80,36 @@ public class Network extends Thread {
         my_request = new Request();
         priority_queue = new PriorityBlockingQueue<Request>();
 
+        // Gets the AtomicBooleans from passed in map.
+        this.flagMap = flagMap;
+        application_request = flagMap.get("request");
+        cs_ready = flagMap.get("ready");
+        release_flag = flagMap.get("release");
+        endThread = flagMap.get("thread");
+
+
         // Create the last_time_stamp array list and fill it with -1s.
         for (int i = 0; i < max_nodes; i++)
         {
             last_time_stamp.add(-1);
         }
 
+        // Creates the PrintWriters that will write to files.
+        try
+        {
+            testerFile = new BufferedWriter(new FileWriter("config_" + my_node_id + ".out"));
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
         // Creates a shared parameters class to share with threads
-        params = new SharedParameters(my_node_id, listenPort, socketMap, writeMap, last_time_stamp, priority_queue,node_info, received_msgs); 
+        params = new SharedParameters(my_node_id, listenPort, socketMap, writeMap, last_time_stamp, priority_queue,node_info, received_msgs, endThread); 
 
         createServerClass(); // Creates a server thread that listens for connecting nodes and returns a socket to the connecting node
+
 
         // Create hook to cleanup everything if terminated or Ctrl-C
         Runtime.getRuntime().addShutdownHook(new Thread() 
@@ -107,7 +120,6 @@ public class Network extends Thread {
                 System.out.println("Done! Bye!");
                 }
         });
-
 
 
         // Socket Establishment
@@ -160,7 +172,7 @@ public class Network extends Thread {
     @Override    
     public void run()
     {
-        while(true)
+        while(!endThread.get())
         {
             // Process any messages received
 
@@ -452,6 +464,10 @@ public class Network extends Thread {
         }
     }
 
+    public int get_my_node_id()
+    {
+        return my_node_id;
+    }
     /** 
      * Closes all sockets and resources used.
      */

@@ -1,7 +1,6 @@
 import java.net.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -13,8 +12,8 @@ public class ServerClass extends Thread
     private ServerSocket serverSocket;
     private Map<Integer,Socket> socketMap;
     private Map<Integer, PrintWriter> writeMap;
-    private PriorityBlockingQueue<Request> priority_queue;
     private int port;
+    private AtomicBoolean endThread;
     SharedParameters params;
 
 
@@ -32,7 +31,7 @@ public class ServerClass extends Thread
         this.socketMap = params.socketMap;
         this.port = params.listenPort;
         this.writeMap = params.writeMap;
-        this.priority_queue = params.priority_queue;
+        this.endThread = params.endThread;
         serverSocket = new ServerSocket(port); // Creates a new server socket
         System.out.println("Server now listening on " + port);
     }
@@ -40,7 +39,7 @@ public class ServerClass extends Thread
     @Override
     public void run()
     {
-        while (true)
+        while (!endThread.get())
         {
             try
             {

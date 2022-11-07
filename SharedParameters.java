@@ -1,4 +1,5 @@
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 // Class to hold data structures that can be passed to other methods
 import java.util.*; // For lists
 import java.net.*;
@@ -15,7 +16,8 @@ public class SharedParameters {
         List<Integer> last_time_stamp,
         PriorityBlockingQueue<Request> priority_queue,
         List<NodeInfo> node_info,
-        List<String> received_msgs)
+        List<String> received_msgs,
+        AtomicBoolean endThread)
     {
         this.my_node_id = my_node_id;
         this.listenPort = listenPort;
@@ -25,6 +27,7 @@ public class SharedParameters {
         this.priority_queue = priority_queue;
         this.node_info = node_info;
         this.received_msgs = received_msgs;
+        this.endThread = endThread;
     }
 
     // Variables
@@ -36,6 +39,7 @@ public class SharedParameters {
     public PriorityBlockingQueue<Request> priority_queue;
     public List<NodeInfo> node_info;
     public List<String> received_msgs;
+    public AtomicBoolean endThread;
 
     /**
      * Finds the node id of a given host name.
