@@ -31,6 +31,7 @@ public class Network extends Thread {
     AtomicBoolean cs_ready;
     AtomicBoolean release_flag;
     AtomicBoolean endThread;
+
     // I/O Structures
     private Map<Integer, Socket> socketMap = new ConcurrentHashMap<>();// Creates a thread-safe Socket List
     private Map<Integer, PrintWriter> writeMap = new ConcurrentHashMap<>(); // Creates a thread-safe output channel list
@@ -170,7 +171,7 @@ public class Network extends Thread {
      * Thread run() function that executes the CL protocol.
      */
     @Override    
-    public void run()
+    public void run() 
     {
         while(!endThread.get())
         {
@@ -248,12 +249,17 @@ public class Network extends Thread {
                     Request pop = priority_queue.poll();
                     System.out.print("[PRIO_Q]: Request popped off prioQ: ");
                     pop.printRequest();
-
+                    
                     System.out.print("[NETWORK]: CS Entered on ");
                     show_time_stamps();
 
+                    try {
+                        testerFile.write("Starting Time Stamp: " + last_time_stamp.get(my_node_id));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     my_request = null; // Erases my_request
-                    cs_ready.set(true);
+                    cs_ready.set(true); 
                 }
 
             }
@@ -261,6 +267,16 @@ public class Network extends Thread {
             // Once critical section is finished, release request and broadcast release message
             if (release_flag.get())
             {
+
+                try
+                {
+                    testerFile.write("End Time Stamp: " + last_time_stamp.get(my_node_id) + "\n");
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
                 // To send a release message to all other nodes
                 for (int i = 0; i < max_nodes; i++)
                 {
@@ -282,7 +298,9 @@ public class Network extends Thread {
 
     }
 
-    // Creates a server thread that listens and establishes connections 
+    /**
+     * Creates a server thread that listens and establishes connections 
+     */
     public void createServerClass()
     {
         try
@@ -298,7 +316,14 @@ public class Network extends Thread {
 
     }
 
-    // Requests to connect with another node's server thread and establish a connection
+    // 
+    /**
+     * Requests to connect with another node's server thread and establish a connection
+     * @param remoteHost Host Name of the desired node connection
+     * @param remotePort Listening Port of the desired node connection
+     * @return Returns a Socket to the requested node
+     * @throws Exception
+     */
     public Socket requestConnection(String remoteHost, int remotePort) throws Exception
     {
         System.out.println("Attempting to connect to " + remoteHost + " on port number " + remotePort + "...");
@@ -354,6 +379,11 @@ public class Network extends Thread {
     }
 
 
+    /**
+     * Processes messages from other nodes and interprets the type of message and operates based on what type
+     * of message it is
+     * @param inputLine The message from other nodes
+     */
     public void process_msgs(String inputLine)
     {
         Request request = new Request(); 
@@ -395,8 +425,9 @@ public class Network extends Thread {
             System.out.println("[ERROR]: Incorrect Message Received from " + request.getNode_id());
         }
     }
+
     /**
-     * 
+     * Helper function to parse Request object and type of request out of message
      * @param message
      * @param request
      * @return Returns based on type of message or error:
@@ -464,10 +495,15 @@ public class Network extends Thread {
         }
     }
 
+    /**
+     * Getter Method
+     * @return Returns the node id
+     */
     public int get_my_node_id()
     {
         return my_node_id;
     }
+
     /** 
      * Closes all sockets and resources used.
      */
@@ -480,6 +516,7 @@ public class Network extends Thread {
             {
                 socketMap.get(1).close();
             }
+            testerFile.close();
         }
         catch (Exception e)
         {
