@@ -103,10 +103,10 @@ public class Application {
 
 
             System.out.println("[APPLICATION]: Time Executing is " +
-                                (timeElapsed.toNanos() / 1000000) + "ms");
+                                (timeElapsed.toNanos() / 1000000.0) + "ms");
             System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand * 1000 + "ms");
             System.out.println("[APPLICATION]: Done Executing");
-            metricFile.write(Long.toString(timeElapsed.toNanos() / 1000000) + ", ");
+            metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + ", ");
 
             // Waiting interRequestDelay before sending next request.
             release.set(true);
@@ -120,9 +120,9 @@ public class Application {
                 timeElapsed = Duration.between(start, end);
             }
 
-            System.out.println("[APPLICATION]: Time Waited " + (timeElapsed.toNanos() / 1000000) + "ms" );
+            System.out.println("[APPLICATION]: Time Waited " + (timeElapsed.toNanos() / 1000000.0) + "ms" );
             System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand * 1000 + "ms");
-            metricFile.write(Long.toString(timeElapsed.toNanos() / 1000000) + "\n");
+            metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + "\n");
 
         }
 
