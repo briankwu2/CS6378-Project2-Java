@@ -8,7 +8,12 @@ public class Application {
 
     public static void main(String[] args) throws Exception {
              
-
+        /**
+         * TO DO:
+         * - Figure out why csExeTime and interRequestDelay are so small?
+         * - Fix the timeElapsed thing then
+         * - Implement variables to count messages, time between sync delay, and system throughput
+         */
         Parser parser = new Parser();
         parser.parseFile("config.txt");
 
