@@ -26,6 +26,7 @@ public class Application {
         atomicFlags.put("request", request);
         atomicFlags.put("ready", ready);
         atomicFlags.put("release", release);
+        atomicFlags.put("thread", endThread);
 
         Network net1 = new Network(parser.get_node_info(), atomicFlags);
         System.out.println("Done!");
