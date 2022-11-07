@@ -76,8 +76,8 @@ public class Application {
         while (maxRequests > 0)
         {
 
-            interRequestDelayRand = rng.getRandom(interRequestDelay) / 1000.0;
-            csExeTimeRand = rng.getRandom(csExeTime) / 1000.0;
+            interRequestDelayRand = rng.getRandom(interRequestDelay);
+            csExeTimeRand = rng.getRandom(csExeTime);
 
             System.out.println("[APPLICATION]: Trying Request " + currRequest++);
             System.out.println("----------------------------------------------");
@@ -95,7 +95,8 @@ public class Application {
             end = Instant.now();
             timeElapsed = Duration.between(end, end); // To set a timeElapsed of 0.
             start =  Instant.now();
-            while ((timeElapsed.toNanos() / 1000000000.0) < csExeTimeRand)
+
+            while (timeElapsed.toNanos()  < (csExeTimeRand * 1000000))
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
@@ -104,7 +105,7 @@ public class Application {
 
             System.out.println("[APPLICATION]: Time Executing is " +
                                 (timeElapsed.toNanos() / 1000000.0) + "ms");
-            System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand * 1000 + "ms");
+            System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand + "ms");
             System.out.println("[APPLICATION]: Done Executing");
             metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + ", ");
 
@@ -121,7 +122,7 @@ public class Application {
             }
 
             System.out.println("[APPLICATION]: Time Waited " + (timeElapsed.toNanos() / 1000000.0) + "ms" );
-            System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand * 1000 + "ms");
+            System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand + "ms");
             metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + "\n");
 
         }
