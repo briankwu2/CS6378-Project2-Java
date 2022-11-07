@@ -95,7 +95,7 @@ public class Application {
             end = Instant.now();
             timeElapsed = Duration.between(end, end); // To set a timeElapsed of 0.
             start =  Instant.now();
-            while ((timeElapsed.toMillis() / 1000.0) < csExeTimeRand)
+            while ((timeElapsed.toNanos() / 1000000000.0) < csExeTimeRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
@@ -103,10 +103,10 @@ public class Application {
 
 
             System.out.println("[APPLICATION]: Time Executing is " +
-                                timeElapsed.toMillis() + "ms");
+                                (timeElapsed.toNanos() / 1000000) + "ms");
             System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand * 1000 + "ms");
             System.out.println("[APPLICATION]: Done Executing");
-            metricFile.write(Long.toString(timeElapsed.toNanos()) + ", ");
+            metricFile.write(Long.toString(timeElapsed.toNanos() / 1000000) + ", ");
 
             // Waiting interRequestDelay before sending next request.
             release.set(true);
@@ -114,15 +114,15 @@ public class Application {
             start =  Instant.now();
             end = Instant.now();
             timeElapsed = Duration.between(start, end);
-            while ((timeElapsed.toMillis() / 1000.0) < interRequestDelayRand)
+            while ((timeElapsed.toNanos() / 1000000000.0) < interRequestDelayRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
             }
 
-            System.out.println("[APPLICATION]: Time Waited " + timeElapsed.toMillis() + "ms" );
+            System.out.println("[APPLICATION]: Time Waited " + (timeElapsed.toNanos() / 1000000) + "ms" );
             System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand * 1000 + "ms");
-            metricFile.write(Long.toString(timeElapsed.toNanos()) + "\n");
+            metricFile.write(Long.toString(timeElapsed.toNanos() / 1000000) + "\n");
 
         }
 
