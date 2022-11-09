@@ -101,7 +101,7 @@ public class Application {
             timeElapsed = Duration.between(end, end); // To set a timeElapsed of 0.
             start =  Instant.now();
 
-            while (timeElapsed.toNanos() * 1000000.0 < csExeTimeRand)
+            while (timeElapsed.toNanos() / 1000000.0 < csExeTimeRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
@@ -120,7 +120,7 @@ public class Application {
             start =  Instant.now();
             end = Instant.now();
             timeElapsed = Duration.between(start, end);
-            while (timeElapsed.toNanos() * 1000000.0 < interRequestDelayRand)
+            while (timeElapsed.toNanos() / 1000000.0 < interRequestDelayRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
