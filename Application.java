@@ -78,6 +78,12 @@ public class Application {
         Instant end;
         Duration timeElapsed;
 
+
+        // Duration for Response Time
+        Instant responseStart;
+        Instant responseEnd;
+        Duration responseElapsed;
+
         while (maxRequests > 0)
         {
             // Are in milliseconds
@@ -89,7 +95,7 @@ public class Application {
             maxRequests--;
 
             request.set(true);
-
+            responseStart = Instant.now(); // Start measuring time of response time
             // Do nothing while waiting for ready flag to be available
             while (!ready.get())
             {
@@ -107,7 +113,7 @@ public class Application {
                 timeElapsed = Duration.between(start, end);
             }
 
-
+            responseEnd = Instant.now(); // Stop measuring response time
             System.out.println("[APPLICATION]: Time Executing is " +
                                 (timeElapsed.toNanos() / 1000000.0) + "ms");
             System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand + "ms");
@@ -128,7 +134,10 @@ public class Application {
 
             System.out.println("[APPLICATION]: Time Waited " + (timeElapsed.toNanos() / 1000000.0) + "ms" );
             System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand + "ms");
-            metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + "\n");
+
+            responseElapsed = Duration.between(responseStart, responseEnd);
+            metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + "\n"); // Writes interRequestDelay
+            metricFile.write("Response Time:" + Double.toString(responseElapsed.toMillis())); // Writes response time
 
         }
 
