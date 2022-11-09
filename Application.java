@@ -84,12 +84,21 @@ public class Application {
         Instant responseEnd;
         Duration responseElapsed;
 
+        // Duration for System Throughput
+        Instant sysStart;
+        Instant sysEnd;
+        Duration sysElapsed;
+        double systemThroughput;
+            
+
         while (maxRequests > 0)
         {
+            sysStart = Instant.now(); // Start of request
+
             // Are in milliseconds
             interRequestDelayRand = rng.getRandom(1.0 / interRequestDelay); //lambda =  1 / mean interRequestDelay
             csExeTimeRand = rng.getRandom(1.0 / csExeTime); // lambda = 1 / mean csExeTime
-
+            
             System.out.println("[APPLICATION]: Trying Request " + currRequest++);
             System.out.println("----------------------------------------------");
             maxRequests--;
@@ -139,6 +148,11 @@ public class Application {
             metricFile.write(Double.toString(timeElapsed.toMillis()) + "\n"); // Writes interRequestDelay
             metricFile.write("Response Time:" + Double.toString(responseElapsed.toMillis()) + "\n"); // Writes response time
 
+            sysEnd = Instant.now(); // 
+            sysElapsed = Duration.between(sysStart, sysEnd);
+            systemThroughput =  (double) currRequest / (sysElapsed.toMillis() / 1000.0);
+            metricFile.write("System Throughput: " + Double.toString(systemThroughput));
+            
         }
 
         System.out.println("[APPLICATION]: All Requests satisfied ");
