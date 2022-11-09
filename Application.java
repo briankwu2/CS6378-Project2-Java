@@ -80,7 +80,7 @@ public class Application {
 
         while (maxRequests > 0)
         {
-
+            // Are in milliseconds
             interRequestDelayRand = rng.getRandom(1.0 / interRequestDelay); //lambda =  1 / mean interRequestDelay
             csExeTimeRand = rng.getRandom(1.0 / csExeTime); // lambda = 1 / mean csExeTime
 
@@ -101,7 +101,7 @@ public class Application {
             timeElapsed = Duration.between(end, end); // To set a timeElapsed of 0.
             start =  Instant.now();
 
-            while (timeElapsed.toNanos()  < (csExeTimeRand * 1000000))
+            while (timeElapsed.toNanos() * 1000000.0 < csExeTimeRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
@@ -120,7 +120,7 @@ public class Application {
             start =  Instant.now();
             end = Instant.now();
             timeElapsed = Duration.between(start, end);
-            while ((timeElapsed.toNanos() / 1000000000.0) < interRequestDelayRand)
+            while (timeElapsed.toNanos() * 1000000.0 < interRequestDelayRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
