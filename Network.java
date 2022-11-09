@@ -42,6 +42,7 @@ public class Network extends Thread {
 
     // For writing to a file for file testing
     private BufferedWriter testerFile;
+    private Integer num_messages_sent = 0;
 
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
@@ -116,8 +117,10 @@ public class Network extends Thread {
         Runtime.getRuntime().addShutdownHook(new Thread() 
         {
             public void run() {
+                System.out.println("Number of messages sent from this node is: " + num_messages_sent);
                 System.out.println("Exiting All Threads... Cleaning up...");
                 cleanUpFunction();
+
                 System.out.println("Done! Bye!");
                 }
         });
@@ -204,6 +207,7 @@ public class Network extends Thread {
                     String send_msg = "request " + my_request.getTime_stamp() + " " + my_node_id;
                     writeMap.get(i).println(send_msg); // Sends request message to node i
                     System.out.println("[TO NODE " + i + "]: " + send_msg);
+                    num_messages_sent++;
 
                 }
 
@@ -289,6 +293,7 @@ public class Network extends Thread {
                     String send_msg = "release " + last_time_stamp.get(my_node_id) + " " + my_node_id;
                     writeMap.get(i).println(send_msg);
                     System.out.println("[TO NODE " + i + "]: " + send_msg);
+                    num_messages_sent++;
                 }
                 release_flag.set(false); 
             }
@@ -408,6 +413,7 @@ public class Network extends Thread {
             show_time_stamps(); // FIXME: Debugging Comments
             writeMap.get(request.getNode_id()).println(send_msg);
             System.out.println("[TO NODE " + request.getNode_id() + "]: " + send_msg);
+            num_messages_sent++;
 
         }
         else if (type_of_message == 2) // For Release
