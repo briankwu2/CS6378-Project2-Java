@@ -107,7 +107,7 @@ public class Application {
             timeElapsed = Duration.between(end, end); // To set a timeElapsed of 0.
             start =  Instant.now();
 
-            while (timeElapsed.toNanos() / 1000000.0 < csExeTimeRand)
+            while (timeElapsed.toMillis() < csExeTimeRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
@@ -115,10 +115,10 @@ public class Application {
 
             responseEnd = Instant.now(); // Stop measuring response time
             System.out.println("[APPLICATION]: Time Executing is " +
-                                (timeElapsed.toNanos() / 1000000.0) + "ms");
+                                (timeElapsed.toMillis()) + "ms");
             System.out.println("[APPLICATION]: Time Should Have Executed: " + csExeTimeRand + "ms");
             System.out.println("[APPLICATION]: Done Executing");
-            metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + ", ");
+            metricFile.write(Double.toString(timeElapsed.toMillis()) + ", ");
 
             // Waiting interRequestDelay before sending next request.
             release.set(true);
@@ -126,18 +126,18 @@ public class Application {
             start =  Instant.now();
             end = Instant.now();
             timeElapsed = Duration.between(start, end);
-            while (timeElapsed.toNanos() / 1000000.0 < interRequestDelayRand)
+            while (timeElapsed.toMillis()  < interRequestDelayRand)
             {
                 end = Instant.now();
                 timeElapsed = Duration.between(start, end);
             }
 
-            System.out.println("[APPLICATION]: Time Waited " + (timeElapsed.toNanos() / 1000000.0) + "ms" );
+            System.out.println("[APPLICATION]: Time Waited " + (timeElapsed.toMillis()) + "ms" );
             System.out.println("[APPLICATION]: Time Should Have Waited " + interRequestDelayRand + "ms");
 
             responseElapsed = Duration.between(responseStart, responseEnd);
-            metricFile.write(Double.toString(timeElapsed.toNanos() / 1000000.0) + "\n"); // Writes interRequestDelay
-            metricFile.write("Response Time:" + Double.toString(responseElapsed.toMillis())); // Writes response time
+            metricFile.write(Double.toString(timeElapsed.toMillis()) + "\n"); // Writes interRequestDelay
+            metricFile.write("Response Time:" + Double.toString(responseElapsed.toMillis()) + "\n"); // Writes response time
 
         }
 
