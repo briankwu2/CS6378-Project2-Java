@@ -254,7 +254,7 @@ public class Network extends Thread {
                     show_time_stamps();
 
                     try {
-                        testerFile.write(last_time_stamp.get(my_node_id));
+                        testerFile.write(Integer.toString(last_time_stamp.get(my_node_id)));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -403,7 +403,7 @@ public class Network extends Thread {
 
             // Sends reply message to node it came from
             // Also increments and updates last time stamp
-            last_time_stamp.set(my_node_id, request.getTime_stamp() + 1);
+            increment_time_stamp();
             String send_msg = "reply " + last_time_stamp.get(my_node_id) + " " + my_node_id;
             show_time_stamps(); // FIXME: Debugging Comments
             writeMap.get(request.getNode_id()).println(send_msg);
@@ -511,12 +511,13 @@ public class Network extends Thread {
     {
         try 
         {
+            testerFile.close();
             // Close all the sockets if not already
             for (int i = 0; i < socketMap.size(); i++)
             {
-                socketMap.get(1).close();
+                if (my_node_id == i) continue;
+                socketMap.get(i).close();
             }
-            testerFile.close();
         }
         catch (Exception e)
         {

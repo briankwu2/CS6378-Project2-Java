@@ -136,7 +136,7 @@ public class Application {
         System.out.println("---------------------------------");
 
         metricFile.close(); // Close file writer
-        endThread.set(true); // Should end all threads.
+        // endThread.set(true); // Should end all threads.
 
     }
 
