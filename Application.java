@@ -151,7 +151,7 @@ public class Application {
             sysEnd = Instant.now(); // 
             sysElapsed = Duration.between(sysStart, sysEnd);
             systemThroughput =  (double) currRequest / (sysElapsed.toMillis() / 1000.0);
-            metricFile.write("System Throughput: " + Double.toString(systemThroughput));
+            metricFile.write("System Throughput: " + Double.toString(systemThroughput) + "\n");
             
         }
 
