@@ -81,8 +81,8 @@ public class Application {
         while (maxRequests > 0)
         {
 
-            interRequestDelayRand = rng.getRandom(interRequestDelay);
-            csExeTimeRand = rng.getRandom(csExeTime);
+            interRequestDelayRand = rng.getRandom(1.0 / interRequestDelay); //lambda =  1 / mean interRequestDelay
+            csExeTimeRand = rng.getRandom(1.0 / csExeTime); // lambda = 1 / mean csExeTime
 
             System.out.println("[APPLICATION]: Trying Request " + currRequest++);
             System.out.println("----------------------------------------------");
