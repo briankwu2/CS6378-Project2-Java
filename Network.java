@@ -196,7 +196,7 @@ public class Network extends Thread {
 
                 priority_queue.add(my_request);
                 // System.out.print("[MY_REQUEST PRIO_Q]: Request From " + my_request.getNode_id() + " Pushed onto Queue: ");
-                my_request.printRequest();
+                // my_request.printRequest();
 
                 for (int i = 0; i < max_nodes; i++)
                 {
@@ -252,7 +252,7 @@ public class Network extends Thread {
                 {
                     Request pop = priority_queue.poll();
                     // System.out.print("[PRIO_Q]: Request popped off prioQ: ");
-                    pop.printRequest();
+                    // pop.printRequest();
                     
                     // System.out.print("[NETWORK]: CS Entered on ");
                     // show_time_stamps();
@@ -404,7 +404,7 @@ public class Network extends Thread {
         {
             priority_queue.add(request); // Pushes request onto priority queue
             // System.out.print("[PRIO_Q]: Request From " + request.getNode_id() + " Pushed onto Queue: ");
-            request.printRequest();
+            // request.printRequest();
 
             // Sends reply message to node it came from
             // Also increments and updates last time stamp
@@ -420,7 +420,7 @@ public class Network extends Thread {
         {
             Request pop = priority_queue.poll(); // Pops the head request off of the prio queue
             // System.out.print("[PRIO_Q]: Request popped off prioQ: ");
-            pop.printRequest();
+            // pop.printRequest();
         }
         // A reply message does nothing but log the last time stamp of the message (alreadyd one above)
         else if (type_of_message == 3)
