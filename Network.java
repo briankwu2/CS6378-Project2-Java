@@ -403,7 +403,7 @@ public class Network extends Thread {
         if (type_of_message == 1)// For Request
         {
             priority_queue.add(request); // Pushes request onto priority queue
-            System.out.print("[PRIO_Q]: Request From " + request.getNode_id() + " Pushed onto Queue: ");
+            // System.out.print("[PRIO_Q]: Request From " + request.getNode_id() + " Pushed onto Queue: ");
             request.printRequest();
 
             // Sends reply message to node it came from
@@ -412,14 +412,14 @@ public class Network extends Thread {
             String send_msg = "reply " + last_time_stamp.get(my_node_id) + " " + my_node_id;
             // show_time_stamps(); // FIXME: Debugging Comments
             writeMap.get(request.getNode_id()).println(send_msg);
-            System.out.println("[TO NODE " + request.getNode_id() + "]: " + send_msg);
+            // System.out.println("[TO NODE " + request.getNode_id() + "]: " + send_msg);
             num_messages_sent++;
 
         }
         else if (type_of_message == 2) // For Release
         {
             Request pop = priority_queue.poll(); // Pops the head request off of the prio queue
-            System.out.print("[PRIO_Q]: Request popped off prioQ: ");
+            // System.out.print("[PRIO_Q]: Request popped off prioQ: ");
             pop.printRequest();
         }
         // A reply message does nothing but log the last time stamp of the message (alreadyd one above)
