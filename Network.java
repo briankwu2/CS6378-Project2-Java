@@ -43,6 +43,7 @@ public class Network extends Thread {
     // For writing to a file for file testing
     private BufferedWriter testerFile;
     private Integer num_messages_sent = 0;
+    private boolean intentionalCS;
 
     /* Public Constructor that assigns the node number, hostname, and listening port.
      * It then creates a server thread that will listen to any client connections
@@ -89,6 +90,7 @@ public class Network extends Thread {
         release_flag = flagMap.get("release");
         endThread = flagMap.get("thread");
 
+        intentionalCS = false;
 
         // Create the last_time_stamp array list and fill it with -1s.
         for (int i = 0; i < max_nodes; i++)
@@ -178,6 +180,14 @@ public class Network extends Thread {
     {
         while(!endThread.get())
         {
+            // Create intentional CS conflicts randomly to tester the tester
+
+            Random testerRandom = new Random();
+            if (testerRandom.nextInt() % 100 == 1) // 1% chance to conflict
+            {
+                intentionalCS = true;
+            }
+
             // Process any messages received
 
             while (!received_msgs.isEmpty())
@@ -248,7 +258,7 @@ public class Network extends Thread {
 
                 }
 
-                if (check_nodes == max_nodes - 1)
+                if (check_nodes == max_nodes - 1 || intentionalCS)
                 {
                     Request pop = priority_queue.poll();
                     System.out.print("[PRIO_Q]: Request popped off prioQ: ");
@@ -259,6 +269,11 @@ public class Network extends Thread {
 
                     try {
                         testerFile.write(Integer.toString(last_time_stamp.get(my_node_id)));
+                        if (intentionalCS)
+                        {
+                            testerFile.write(" T"); // To mark an intentional conflict
+                            intentionalCS = false;
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
