@@ -195,7 +195,7 @@ public class Network extends Thread {
                 
 
                 priority_queue.add(my_request);
-                System.out.print("[MY_REQUEST PRIO_Q]: Request From " + my_request.getNode_id() + " Pushed onto Queue: ");
+                // System.out.print("[MY_REQUEST PRIO_Q]: Request From " + my_request.getNode_id() + " Pushed onto Queue: ");
                 my_request.printRequest();
 
                 for (int i = 0; i < max_nodes; i++)
@@ -206,7 +206,7 @@ public class Network extends Thread {
                     show_time_stamps();
                     String send_msg = "request " + my_request.getTime_stamp() + " " + my_node_id;
                     writeMap.get(i).println(send_msg); // Sends request message to node i
-                    System.out.println("[TO NODE " + i + "]: " + send_msg);
+                    // System.out.println("[TO NODE " + i + "]: " + send_msg);
                     num_messages_sent++;
 
                 }
@@ -251,10 +251,10 @@ public class Network extends Thread {
                 if (check_nodes == max_nodes - 1)
                 {
                     Request pop = priority_queue.poll();
-                    System.out.print("[PRIO_Q]: Request popped off prioQ: ");
+                    // System.out.print("[PRIO_Q]: Request popped off prioQ: ");
                     pop.printRequest();
                     
-                    System.out.print("[NETWORK]: CS Entered on ");
+                    // System.out.print("[NETWORK]: CS Entered on ");
                     show_time_stamps();
 
                     try {
@@ -292,7 +292,7 @@ public class Network extends Thread {
                     show_time_stamps();
                     String send_msg = "release " + last_time_stamp.get(my_node_id) + " " + my_node_id;
                     writeMap.get(i).println(send_msg);
-                    System.out.println("[TO NODE " + i + "]: " + send_msg);
+                    // System.out.println("[TO NODE " + i + "]: " + send_msg);
                     num_messages_sent++;
                 }
                 release_flag.set(false); 
