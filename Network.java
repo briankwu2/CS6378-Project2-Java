@@ -236,7 +236,6 @@ public class Network extends Thread {
                 my_request.compareTo(priority_queue.peek()) == 0)
             {
                 // Second Condition
-                // FIXME: Double check this condition/protocol
                 // Check if my request's time stamp is lower than all of the other node's latest time stamp messages
                 int check_nodes = 0;
                 for (int i = 0; i < last_time_stamp.size(); i++)
@@ -269,11 +268,7 @@ public class Network extends Thread {
 
                     try {
                         testerFile.write(Integer.toString(last_time_stamp.get(my_node_id)));
-                        if (intentionalCS)
-                        {
-                            testerFile.write(" T"); // To mark an intentional conflict
-                            intentionalCS = false;
-                        }
+                        
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -289,7 +284,16 @@ public class Network extends Thread {
 
                 try
                 {
-                    testerFile.write(" " + last_time_stamp.get(my_node_id) + "\n");
+                    if (intentionalCS)
+                    {
+                        testerFile.write(" " + last_time_stamp.get(my_node_id));
+                        testerFile.write(" T\n"); // To mark an intentional conflict
+                        intentionalCS = false;
+                    }
+                    else
+                    {
+                        testerFile.write(" " + last_time_stamp.get(my_node_id) + "\n");
+                    }
                 }
                 catch (IOException e)
                 {
