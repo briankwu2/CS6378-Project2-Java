@@ -42,7 +42,7 @@ public class Application {
 
         // BufferedWriter for writing to files.
         BufferedWriter metricFile = new BufferedWriter(new FileWriter("metric_" + net1.get_my_node_id() + ".csv"));
-        metricFile.write("Format: <csExeTime>, <interRequestDelay>\n");
+        metricFile.write("Format: <csExeTime>, <interRequestDelay>, <response time>, <system throughput>\n");
 
         // Create hook to catch CTRL+C and clean up and close all relevant I/O before exiting.
         Runtime.getRuntime().addShutdownHook(new Thread() 
@@ -146,12 +146,12 @@ public class Application {
 
             responseElapsed = Duration.between(responseStart, responseEnd);
             metricFile.write(Double.toString(timeElapsed.toMillis()) + "\n"); // Writes interRequestDelay
-            metricFile.write("Response Time:" + Double.toString(responseElapsed.toMillis()) + "\n"); // Writes response time
+            metricFile.write(Double.toString(responseElapsed.toMillis()) +", "); // Writes response time
 
             sysEnd = Instant.now(); // 
             sysElapsed = Duration.between(sysStart, sysEnd);
             systemThroughput =  (double) currRequest / (sysElapsed.toMillis() / 1000.0);
-            metricFile.write("System Throughput: " + Double.toString(systemThroughput) + "\n");
+            metricFile.write(Double.toString(systemThroughput) + "\n");
             
         }
 
