@@ -91,9 +91,9 @@ public class Application {
         double systemThroughput;
             
 
+        sysStart = Instant.now(); // Start of requests 
         while (maxRequests > 0)
         {
-            sysStart = Instant.now(); // Start of request
 
             // Are in milliseconds
             interRequestDelayRand = rng.getRandom(1.0 / interRequestDelay); //lambda =  1 / mean interRequestDelay
