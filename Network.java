@@ -180,13 +180,7 @@ public class Network extends Thread {
     {
         while(!endThread.get())
         {
-            // Create intentional CS conflicts randomly to tester the tester
-
-            Random testerRandom = new Random();
-            if (testerRandom.nextInt() % 100 == 1) // 1% chance to conflict
-            {
-                intentionalCS = true;
-            }
+            
 
             // Process any messages received
 
@@ -199,6 +193,15 @@ public class Network extends Thread {
             // If CS_enter() is called, push request onto priority queue and send request message to all other nodes
             if (application_request.get())
             {
+
+                // Create intentional CS conflicts randomly to tester the tester
+
+                Random testerRandom = new Random();
+                if (testerRandom.nextInt() % 10 == 1) // 10% chance to conflict per request
+                {
+                    intentionalCS = true;
+                }
+
                 increment_time_stamp();
                 show_time_stamps();
                 my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
