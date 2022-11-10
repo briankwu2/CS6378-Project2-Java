@@ -270,7 +270,10 @@ public class Network extends Thread {
                     show_time_stamps();
 
                     try {
-                        testerFile.write(Integer.toString(last_time_stamp.get(my_node_id)));
+                        synchronized(testerFile)
+                        {
+                            testerFile.write(Integer.toString(last_time_stamp.get(my_node_id)));
+                        }
                         
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -289,13 +292,19 @@ public class Network extends Thread {
                 {
                     if (intentionalCS)
                     {
+                        synchronized(testerFile)
+                        {
                         testerFile.write(" " + last_time_stamp.get(my_node_id));
                         testerFile.write(" T\n"); // To mark an intentional conflict
                         intentionalCS = false;
+                        }
                     }
                     else
                     {
-                        testerFile.write(" " + last_time_stamp.get(my_node_id) + "\n");
+                        synchronized(testerFile)
+                        {
+                            testerFile.write(" " + last_time_stamp.get(my_node_id) + "\n");
+                        }
                     }
                 }
                 catch (IOException e)
