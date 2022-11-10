@@ -190,7 +190,7 @@ public class Network extends Thread {
             if (application_request.get())
             {
                 increment_time_stamp();
-                show_time_stamps();
+                // show_time_stamps();
                 my_request = new Request(last_time_stamp.get(my_node_id), my_node_id); // Creates a my request
                 
 
@@ -203,7 +203,7 @@ public class Network extends Thread {
                     if (i == my_node_id) continue; // Skip my own node
                     
                     increment_time_stamp();
-                    show_time_stamps();
+                    // show_time_stamps();
                     String send_msg = "request " + my_request.getTime_stamp() + " " + my_node_id;
                     writeMap.get(i).println(send_msg); // Sends request message to node i
                     // System.out.println("[TO NODE " + i + "]: " + send_msg);
@@ -255,7 +255,7 @@ public class Network extends Thread {
                     pop.printRequest();
                     
                     // System.out.print("[NETWORK]: CS Entered on ");
-                    show_time_stamps();
+                    // show_time_stamps();
 
                     try {
                         testerFile.write(Integer.toString(last_time_stamp.get(my_node_id)));
@@ -289,7 +289,7 @@ public class Network extends Thread {
 
                     // Send request messages to all other nodes
                     increment_time_stamp();
-                    show_time_stamps();
+                    // show_time_stamps();
                     String send_msg = "release " + last_time_stamp.get(my_node_id) + " " + my_node_id;
                     writeMap.get(i).println(send_msg);
                     // System.out.println("[TO NODE " + i + "]: " + send_msg);
@@ -398,7 +398,7 @@ public class Network extends Thread {
         
         last_time_stamp.set(my_node_id, Integer.max(request.getTime_stamp(), last_time_stamp.get(my_node_id)) + 1);
         last_time_stamp.set(request.getNode_id(), request.getTime_stamp()); // Update client nodes time stamp
-        show_time_stamps(); // FIXME: Debugging Function
+        // show_time_stamps(); // FIXME: Debugging Function
 
         if (type_of_message == 1)// For Request
         {
@@ -410,7 +410,7 @@ public class Network extends Thread {
             // Also increments and updates last time stamp
             increment_time_stamp();
             String send_msg = "reply " + last_time_stamp.get(my_node_id) + " " + my_node_id;
-            show_time_stamps(); // FIXME: Debugging Comments
+            // show_time_stamps(); // FIXME: Debugging Comments
             writeMap.get(request.getNode_id()).println(send_msg);
             System.out.println("[TO NODE " + request.getNode_id() + "]: " + send_msg);
             num_messages_sent++;
