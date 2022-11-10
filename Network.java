@@ -197,7 +197,7 @@ public class Network extends Thread {
                 // Create intentional CS conflicts randomly to tester the tester
 
                 Random testerRandom = new Random();
-                if (testerRandom.nextInt() % 10 == 1) // 10% chance to conflict per request
+                if (testerRandom.nextInt() % 3 == 1) // 10% chance to conflict per request
                 {
                     intentionalCS = true;
                 }
